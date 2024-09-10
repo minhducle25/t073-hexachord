@@ -1,0 +1,52 @@
+.progress-bar {
+  width: 0%;
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.progress-time-container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.progress-time {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 2px 6px;
+  border-radius: 4px;
+  width: 80px;
+}
+
+.loop-start-arrow, .loop-end-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+}
+
+.loop-start-arrow {
+  border-top: 15px solid blue;
+  top: -20px;
+}
+
+.loop-end-arrow {
+  border-bottom: 15px solid red;
+  bottom: -20px;
+}
+
+.loop-input {
+  display: none;
+  z-index: 10;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+/* Full-width style for player */
+.max-w-full {
+  width: 100%;
+}
