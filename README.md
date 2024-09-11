@@ -10,13 +10,13 @@
 <br />
 <div align="center">
   <a href="https://github.com/minhducle25/t073-hexachord">
-    <img src="public/vite.svg" alt="Logo" width="80" height="80">
+    <img src="https://cdn.freebiesupply.com/logos/large/2x/qut-8-logo-png-transparent.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Tonnetz Player</h3>
 
   <p align="center">
-    Web version of the Hexachord software, with new features planned as well.
+    TONNETZ PLAYER A browser-based “Tonnetz player” will enable users to directly analyse and play with the music harmony. The tool will allow users to input, modify, and output databases of Tonnetz diagrams of musical harmony, link these diagrams to sound samples, and play a set of triads. By incorporating these features, this project will help improve the lessons on music harmony teaching and research.
     <br />
     <a href="https://github.com/minhducle25/t073-hexachord"><strong>Explore the docs »</strong></a>
     <br />
