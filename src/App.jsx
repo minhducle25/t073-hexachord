@@ -11,14 +11,24 @@ const App = () => {
         <div id="app"
         style={{
             display:"flex",
+            flexDirection: "column",
             justifyContent: "center", // Center the content horizontally
             alignItems: "center", // Align items vertically in the center
             }}>
-            <TonnetzView notes={notes} />
+                <div style={{
+                    display: 'flex'
+                }}>
+                    <TonnetzView notes={notes} />
+                    <CircleView />
+                </div>
 
-            <CircleView />
-            <LoopPlayer />
+                <div>
+                    <LoopPlayer />
+                </div>
+            
         </div>
+
+
     );
 };
 
