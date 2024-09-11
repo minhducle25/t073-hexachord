@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CircleView from './components/CircleView';
 import TonnetzView from './components/TonnetzView';
+import LoopPlayer from './components/LoopPlayer';
 
 
 const App = () => {
@@ -14,7 +15,9 @@ const App = () => {
             alignItems: "center", // Align items vertically in the center
             }}>
             <TonnetzView notes={notes} />
+
             <CircleView />
+            <LoopPlayer />
         </div>
     );
 };
