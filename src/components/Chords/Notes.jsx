@@ -52,7 +52,7 @@ const Notes = ({ cx, cy, r, note, onNoteClick, onNoteRelease, selectedNote }) =>
       <text
         x={cx}
         y={cy}
-        className="fill-gray-400 text-[12px] group-hover:fill-gray-600"
+        className="fill-gray-400 text-[14px] group-hover:fill-gray-600"
         style={{
           textAnchor: 'middle',
           dominantBaseline: 'central',
