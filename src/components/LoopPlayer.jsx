@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import './LoopPlayer.css'; // 스타일 시트 연결
 
 const LoopPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -86,26 +85,26 @@ const LoopPlayer = () => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-lg max-w-full w-full">
+    <div className="bg-white p-8 rounded shadow-lg w-full max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Tonnetz Loop Player</h1>
       <input type="file" accept=".mid" onChange={handleFileChange} className="mb-4 p-2 border rounded" />
       
       <div className="flex items-center gap-4 mb-4">
-        <button onClick={handlePlayPause} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={handlePlayPause} className={`${isPlaying ? 'bg-red-500' : 'bg-green-500'} hover:bg-green-700 text-white font-bold py-2 px-4 rounded`}>
           {isPlaying ? 'Pause' : 'Play'}
         </button>
-        <label htmlFor="volumeControl" className="text-gray-700">Volume:</label>
-        <input type="range" id="volumeControl" min="0" max="100" value={volume} onChange={handleVolumeChange} className="w-1/4" />
+        <label className="text-gray-700">Volume:</label>
+        <input type="range" min="0" max="100" value={volume} onChange={handleVolumeChange} className="w-1/4" />
       </div>
 
       <div className="flex items-center gap-4 mb-4">
-        <button onClick={handleRecord} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={handleRecord} className={`${isRecording ? 'bg-red-500' : 'bg-blue-500'} hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}>
           {isRecording ? 'Recording...' : 'Record'}
         </button>
         <button onClick={handleStopRecord} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
           Stop Record
         </button>
-        <button onClick={handleDownload} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={handleDownload} className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
           Download
         </button>
         <button onClick={handleStop} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
@@ -113,13 +112,13 @@ const LoopPlayer = () => {
         </button>
       </div>
 
-      <div className="bg-gray-300 rounded-full h-2.5 relative cursor-pointer mb-4">
-        <div ref={progressBarRef} className="progress-bar bg-blue-500 h-full" style={{ width: '0%' }}></div>
+      <div className="bg-gray-300 rounded-full h-2.5 relative cursor-pointer overflow-hidden">
+        <div ref={progressBarRef} className="h-full bg-blue-500" style={{ width: '0%' }}></div>
       </div>
 
-      <div className="progress-time-container">
-        <div className="progress-time">{currentTime}</div>
-        <div className="progress-time">{duration}</div>
+      <div className="flex justify-between font-mono text-sm mt-2">
+        <span>{currentTime}</span>
+        <span>{duration}</span>
       </div>
     </div>
   );
