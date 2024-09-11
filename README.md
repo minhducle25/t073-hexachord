@@ -10,7 +10,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/minhducle25/t073-hexachord">
-    <img src="https://cdn.freebiesupply.com/logos/large/2x/qut-8-logo-png-transparent.png" alt="Logo" width="150" height="150">
+    <img src="https://cdn.freebiesupply.com/logos/large/2x/qut-8-logo-png-transparent.png" alt="Logo" width="150" height="80">
   </a>
 
 <h3 align="center">Tonnetz Player</h3>
