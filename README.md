@@ -3,8 +3,6 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
 
 
 
@@ -15,10 +13,10 @@
     <img src="public/vite.svg" alt="Logo" width="80" height="80">
   </a>
 
-<h3 align="center">project_title</h3>
+<h3 align="center">Tonnetz Player</h3>
 
   <p align="center">
-    project_description
+    Web version of the Hexachord software, with new features planned as well.
     <br />
     <a href="https://github.com/minhducle25/t073-hexachord"><strong>Explore the docs »</strong></a>
     <br />
