@@ -10,7 +10,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/minhducle25/t073-hexachord">
-    <img src="https://research.qut.edu.au/mpqc/wp-content/uploads/sites/394/2022/03/QUT-logo-MP.png" alt="Logo" width="150" height="150">
+    <img src="https://research.qut.edu.au/mpqc/wp-content/uploads/sites/394/2022/03/QUT-logo-MP.png" alt="Logo" width="250" height="100">
   </a>
 
 <h3 align="center">Tonnetz Player</h3>
