@@ -4,6 +4,7 @@ import Notes from "./Chords/Notes";
 import Trichords from "./Chords/Trichords";
 import BottomDrawer from "./BottomDrawer";
 import ToneGenerator from "./ToneGenerator"; // Import ToneGenerator
+import NoteMap from "./NoteMap";
 import { getStartingNote, notes } from "./noteUtils"; // Import the utility function and notes array
 
 const notePositions = [];
@@ -198,21 +199,24 @@ const DragZoomSvg = ({
       style={{ cursor: captureMouse ? "grabbing" : "grab" }}
     >
       {trichords}
-
       {Array.from({ length: numLines }).map((_, lineIndex) => {
         const startingNote = getStartingNote(lineIndex);
         const startingIndex = notes.indexOf(startingNote);
         return (
           <g key={lineIndex} transform={transform}>
             {notes.map((note, index) => {
-              const cx = lineIndex % 2 === 0 ? index * 86.5 : index * 86.5 + 43.25;
+              const cx =
+                lineIndex % 2 === 0 ? index * 86.5 : index * 86.5 + 43.25;
               const cy = lineIndex * lineHeight;
               const noteIndex = (startingIndex + index) % notes.length;
+              // console.log({ note: notes[noteIndex], x: cx, y: cy });
               notePositions.push({ note: notes[noteIndex], x: cx, y: cy });
 
               return (
+                <React.Fragment key={`${lineIndex}-${index}`}>
+                <NoteMap note={notes[noteIndex]} x={cx} y={cy} />
                 <Notes
-                  key={index}
+                  key={`${lineIndex}-${index}-note`}
                   cx={cx} // Alternate cx position
                   cy={cy} // Increment cy for each line
                   r={10}
@@ -221,6 +225,7 @@ const DragZoomSvg = ({
                   onNoteRelease={handleNoteRelease} // Pass the release callback to Notes
                   selectedNote={selectedNote} // Pass the selected note to Notes
                 />
+              </React.Fragment>
               );
             })}
           </g>
@@ -243,7 +248,8 @@ const DragZoomSvg = ({
           <BottomDrawer graph={graph} setGraph={setGraph} x={950} y={550} />
         </div>
       </foreignObject>
-      <ToneGenerator ref={toneGeneratorRef} /> {/* Pass the ref to ToneGenerator */}
+      <ToneGenerator ref={toneGeneratorRef} />{" "}
+      {/* Pass the ref to ToneGenerator */}
     </svg>
   );
 };

@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { categorizedPositions } from '../NoteMap'; // Import categorizedPositions
+import ToneGenerator from '../ToneGenerator'; // Import ToneGenerator
+import Notes from './Notes'; // Import Notes component
 
 const logicalToSvg = ({ x, y }) => {
   // Convert logical coordinates to SVG coordinates
@@ -25,39 +28,107 @@ const rotateAndTranslateCoordinates = (coords, angle, center, translation) => {
   });
 };
 
+// Function to divide points by 2 and round x-coordinates to two decimal places
+const dividePointsByTwo = (points) => {
+  return points.map(({ x, y }) => ({
+    x: Math.round((x / 2) * 100) / 100,
+    y: y / 2,
+  }));
+};
+
+// Function to find matching points in all arrays of categorizedPositions and return note values
+const findMatchingPoints = (points, categorizedPositions, range = 1) => {
+  const matchingPoints = [];
+  for (const note in categorizedPositions) {
+    const aArray = categorizedPositions[note];
+    points.forEach(({ x, y }) => {
+      const match = aArray.find(point => 
+        Math.abs(point.x - x) <= range && Math.abs(point.y - y) <= range
+      );
+      if (match) {
+        matchingPoints.push({ ...match, note });
+      }
+    });
+  }
+  return matchingPoints;
+};
+
 const Trichords = ({ shape = [] }) => {
+  const toneGeneratorRef = useRef(null); // Ref for ToneGenerator
+  const [activeTrichord, setActiveTrichord] = useState(null); // State for active trichord
+  const [disableHover, setDisableHover] = useState(false); // State to disable hover effect
+  const [matchingPoints, setMatchingPoints] = useState([]); // State for matching points
+
   const coords = shape.map(logicalToSvg);
   const center = {
     x: average(coords.map(({ x }) => x)),
     y: average(coords.map(({ y }) => y)),
   };
-  const points = coords.map(({ x, y }) => `${x},${y}`).join(' ');
+  const points = coords.map(({ x, y }) => ({ x, y }));
 
   // Calculate new coordinates for the rotated trichord
   const translation = { x: 30, y: 50 }; // Adjust translation as needed
   const newCoords = rotateAndTranslateCoordinates(coords, 180, center, translation);
   const newPoints = newCoords.map(({ x, y }) => `${x},${y}`).join(' ');
 
-  const handleClick = (points) => {
-    console.log('Polygon points:', points);
+  const handleMouseDown = (pointsString, trichordId) => {
+    // Convert points string back to array of objects
+    const pointsArray = pointsString.split(' ').map(point => {
+      const [x, y] = point.split(',').map(Number);
+      return { x, y };
+    });
+
+    // Divide points by 2 and find matching points
+    const dividedPoints = dividePointsByTwo(pointsArray);
+    const matchingPoints = findMatchingPoints(dividedPoints, categorizedPositions);
+
+    // Play the matching points as a chord
+    handleChordClick(matchingPoints);
+
+    // Set the active trichord and disable hover effect
+    setActiveTrichord(trichordId);
+    setDisableHover(true);
+
+    // Set matching points state
+    setMatchingPoints(matchingPoints);
+  };
+
+  const handleChordClick = (matchingPoints) => {
+    if (toneGeneratorRef.current) {
+      toneGeneratorRef.current.playChord(matchingPoints);
+    }
+  };
+
+  const handleMouseUp = () => {
+    // Reset the active trichord and re-enable hover effect
+    setActiveTrichord(null);
+    setDisableHover(false);
   };
 
   return (
     <>
       <g className="tonnetzTrichord group">
         <polygon
-          className="fill-transparent stroke-current text-black stroke-opacity-50 group-hover:fill-red-500"
-          points={points}
-          onClick={() => handleClick(points)}
+          className={`fill-transparent stroke-current text-black stroke-opacity-50 ${disableHover ? '' : 'group-hover:fill-red-500'} ${activeTrichord === 1 ? 'fill-yellow-500' : ''}`}
+          points={points.map(({ x, y }) => `${x},${y}`).join(' ')}
+          onMouseDown={(e) => handleMouseDown(e.target.getAttribute('points'), 1)}
+          onMouseUp={handleMouseUp}
         />
       </g>
       <g className="tonnetzTrichord group">
         <polygon
-          className="fill-transparent stroke-current text-black stroke-opacity-50 group-hover:fill-red-500"
+          className={`fill-transparent stroke-current text-black stroke-opacity-50 ${disableHover ? '' : 'group-hover:fill-red-500'} ${activeTrichord === 2 ? 'fill-yellow-500' : ''}`}
           points={newPoints}
-          onClick={() => handleClick(newPoints)}
+          onMouseDown={(e) => handleMouseDown(e.target.getAttribute('points'), 2)}
+          onMouseUp={handleMouseUp}
         />
       </g>
+      <ToneGenerator ref={toneGeneratorRef} /> {/* Add ToneGenerator component */}
+      {/* <Notes
+        matchingPoints={matchingPoints.map(mp => mp.note)}
+        onNoteClick={activeTrichord !== null} // Pass true if activeTrichord is not null
+        onNoteRelease={activeTrichord === null} // Pass true if activeTrichord is null
+      /> */}
     </>
   );
 };
