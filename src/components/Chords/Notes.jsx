@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 
 const noteColors = {
-  "A": "#FFA500", // Orange
-  "A♯": "#FF8C00", // Darker Orange
-  "B": "#FF4500", // Red-Orange
-  "C": "#FF0000", // Red
-  "C♯": "#DC143C", // Crimson
-  "D": "#B22222", // Firebrick
-  "D♯": "#8B0000", // Dark Red
-  "E": "#800000", // Maroon
-  "F": "#FF6347", // Tomato
-  "F♯": "#FF7F50", // Coral
-  "G": "#FF4500", // Orange-Red
-  "G♯": "#FF8C00" // Dark Orange
+  "A": "#F5B7B1", // Pastel Orange
+  "A♯": "#F5CBA7", // Pastel Darker Orange
+  "B": "#FAD7A0", // Pastel Red-Orange
+  "C": "#F8C471", // Pastel Red
+  "C♯": "#F7A8A0", // Pastel Crimson
+  "D": "#F6B8C0", // Pastel Firebrick
+  "D♯": "#F4AAB9", // Pastel Dark Red
+  "E": "#F3C6C9", // Pastel Maroon
+  "F": "#F7B7A3", // Pastel Tomato
+  "F♯": "#F6BEAE", // Pastel Coral
+  "G": "#F5B9B7", // Pastel Orange-Red
+  "G♯": "#F5B7A2" // Pastel Dark Orange
 };
 
 const Notes = ({ cx, cy, r, note, onNoteClick, onNoteRelease, selectedNote }) => {
