@@ -19,7 +19,6 @@ const Notes = ({ cx, cy, r, note, onNoteClick, onNoteRelease, selectedNote }) =>
   const [isClicked, setIsClicked] = useState(false);
 
   const handleMouseDown = () => {
-    console.log(note);
     setIsClicked(true);
     if (onNoteClick) {
       onNoteClick(note, cy); // Pass the y-coordinate
