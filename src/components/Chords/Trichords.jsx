@@ -1,7 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { categorizedPositions } from '../NoteMap'; // Import categorizedPositions
-import ToneGenerator from '../ToneGenerator'; // Import ToneGenerator
-import Notes from './Notes'; // Import Notes component
+// Trichords.jsx
+
+import React, { useRef, useState } from "react";
+import { categorizedPositions } from "../NoteMap"; // Import categorizedPositions
+import ToneGenerator from "../ToneGenerator"; // Import ToneGenerator
+import Notes from "./Notes"; // Import Notes component
+import Dichords from "./Dichords"; // Import Dichords component
 
 const logicalToSvg = ({ x, y }) => {
   // Convert logical coordinates to SVG coordinates
@@ -42,8 +45,9 @@ const findMatchingPoints = (points, categorizedPositions, range = 1) => {
   for (const note in categorizedPositions) {
     const aArray = categorizedPositions[note];
     points.forEach(({ x, y }) => {
-      const match = aArray.find(point => 
-        Math.abs(point.x - x) <= range && Math.abs(point.y - y) <= range
+      const match = aArray.find(
+        (point) =>
+          Math.abs(point.x - x) <= range && Math.abs(point.y - y) <= range
       );
       if (match) {
         matchingPoints.push({ ...match, note });
@@ -53,7 +57,14 @@ const findMatchingPoints = (points, categorizedPositions, range = 1) => {
   return matchingPoints;
 };
 
-const Trichords = ({ shape = [], scale, tx, ty, setMatchingPoints, setActiveChord }) => {
+const Trichords = ({
+  shape = [],
+  scale,
+  tx,
+  ty,
+  setMatchingPoints,
+  setActiveChord,
+}) => {
   const toneGeneratorRef = useRef(null); // Ref for ToneGenerator
   const [activeTrichord, setActiveTrichord] = useState(null); // State for active trichord
   const [disableHover, setDisableHover] = useState(false); // State to disable hover effect
@@ -67,19 +78,27 @@ const Trichords = ({ shape = [], scale, tx, ty, setMatchingPoints, setActiveChor
 
   // Calculate new coordinates for the rotated trichord
   const translation = { x: 30, y: 50 }; // Adjust translation as needed
-  const newCoords = rotateAndTranslateCoordinates(coords, 180, center, translation);
-  const newPoints = newCoords.map(({ x, y }) => `${x},${y}`).join(' ');
+  const newCoords = rotateAndTranslateCoordinates(
+    coords,
+    180,
+    center,
+    translation
+  );
+  const newPoints = newCoords.map(({ x, y }) => `${x},${y}`).join(" ");
 
   const handleMouseDown = (pointsString, trichordId) => {
     // Convert points string back to array of objects
-    const pointsArray = pointsString.split(' ').map(point => {
-      const [x, y] = point.split(',').map(Number);
+    const pointsArray = pointsString.split(" ").map((point) => {
+      const [x, y] = point.split(",").map(Number);
       return { x, y };
     });
 
     // Divide points by 2 and find matching points
     const dividedPoints = dividePointsByTwo(pointsArray);
-    const matchingPoints = findMatchingPoints(dividedPoints, categorizedPositions);
+    const matchingPoints = findMatchingPoints(
+      dividedPoints,
+      categorizedPositions
+    );
 
     // Play the matching points as a chord
     handleChordClick(matchingPoints);
@@ -107,25 +126,59 @@ const Trichords = ({ shape = [], scale, tx, ty, setMatchingPoints, setActiveChor
     setActiveChord(null); // Clear active chord
   };
 
+  const handleSideClick = (sideIndex) => {
+    const dividedPoints = points.map(({ x, y }) => ({
+      x: x / 2,
+      y: y / 2,
+    }));
+  
+    const point1 = dividedPoints[sideIndex];
+    const point2 = dividedPoints[(sideIndex + 1) % dividedPoints.length];
+  
+    // console.log(dividedPoints);
+  
+    const dichordPoints = [point1, point2];
+  
+    const dichordNotes = findMatchingPoints(dichordPoints, categorizedPositions);
+  
+    // console.log("Dichord Notes:", dichordNotes);
+  
+    return dichordNotes;
+  };
+
   return (
     <>
       <g className="tonnetzTrichord group">
         <polygon
-          className={`fill-transparent stroke-current text-black stroke-opacity-50 ${disableHover ? '' : 'group-hover:fill-red-500'} ${activeTrichord === 1 ? 'fill-yellow-500' : ''}`}
-          points={points.map(({ x, y }) => `${x},${y}`).join(' ')}
-          onMouseDown={(e) => handleMouseDown(e.target.getAttribute('points'), 1)}
+          className={`fill-transparent stroke-current text-black stroke-opacity-50 ${
+            disableHover ? "" : "group-hover:fill-red-500"
+          } ${activeTrichord === 1 ? "fill-yellow-500" : ""}`}
+          points={points.map(({ x, y }) => `${x},${y}`).join(" ")}
+          onMouseDown={(e) =>
+            handleMouseDown(e.target.getAttribute("points"), 1)
+          }
           onMouseUp={handleMouseUp}
+        />
+        <Dichords
+          points={points.map(({ x, y }) => `${x},${y}`).join(" ")}
+          onSideClick={handleSideClick}
         />
       </g>
       <g className="tonnetzTrichord group">
         <polygon
-          className={`fill-transparent stroke-current text-black stroke-opacity-50 ${disableHover ? '' : 'group-hover:fill-red-500'} ${activeTrichord === 2 ? 'fill-yellow-500' : ''}`}
+          className={`fill-transparent stroke-current text-black stroke-opacity-50 ${
+            disableHover ? "" : "group-hover:fill-red-500"
+          } ${activeTrichord === 2 ? "fill-yellow-500" : ""}`}
           points={newPoints}
-          onMouseDown={(e) => handleMouseDown(e.target.getAttribute('points'), 2)}
+          onMouseDown={(e) =>
+            handleMouseDown(e.target.getAttribute("points"), 2)
+          }
           onMouseUp={handleMouseUp}
         />
+        <Dichords points={newPoints} onSideClick={handleSideClick} />
       </g>
-      <ToneGenerator ref={toneGeneratorRef} /> {/* Add ToneGenerator component */}
+      <ToneGenerator ref={toneGeneratorRef} />{" "}
+      {/* Add ToneGenerator component */}
     </>
   );
 };
