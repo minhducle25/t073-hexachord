@@ -53,11 +53,10 @@ const findMatchingPoints = (points, categorizedPositions, range = 1) => {
   return matchingPoints;
 };
 
-const Trichords = ({ shape = [] }) => {
+const Trichords = ({ shape = [], scale, tx, ty, setMatchingPoints, setActiveChord }) => {
   const toneGeneratorRef = useRef(null); // Ref for ToneGenerator
   const [activeTrichord, setActiveTrichord] = useState(null); // State for active trichord
   const [disableHover, setDisableHover] = useState(false); // State to disable hover effect
-  const [matchingPoints, setMatchingPoints] = useState([]); // State for matching points
 
   const coords = shape.map(logicalToSvg);
   const center = {
@@ -91,6 +90,7 @@ const Trichords = ({ shape = [] }) => {
 
     // Set matching points state
     setMatchingPoints(matchingPoints);
+    setActiveChord(trichordId); // Set active chord
   };
 
   const handleChordClick = (matchingPoints) => {
@@ -103,6 +103,8 @@ const Trichords = ({ shape = [] }) => {
     // Reset the active trichord and re-enable hover effect
     setActiveTrichord(null);
     setDisableHover(false);
+    setMatchingPoints([]); // Clear matching points
+    setActiveChord(null); // Clear active chord
   };
 
   return (
@@ -124,11 +126,6 @@ const Trichords = ({ shape = [] }) => {
         />
       </g>
       <ToneGenerator ref={toneGeneratorRef} /> {/* Add ToneGenerator component */}
-      {/* <Notes
-        matchingPoints={matchingPoints.map(mp => mp.note)}
-        onNoteClick={activeTrichord !== null} // Pass true if activeTrichord is not null
-        onNoteRelease={activeTrichord === null} // Pass true if activeTrichord is null
-      /> */}
     </>
   );
 };
