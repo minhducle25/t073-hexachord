@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import TonnetzSelector from "./TonnetzSelector";
-import Notes from "./Chords/Notes";
+import Notes, { noteColors } from "./Chords/Notes";
 import Trichords from "./Chords/Trichords";
 import BottomDrawer from "./BottomDrawer";
 import ToneGenerator from "./ToneGenerator"; // Import ToneGenerator
@@ -32,6 +32,8 @@ const DragZoomSvg = ({
   const [captureMouse, setCaptureMouse] = useState(false);
   const [clickedPos, setClickedPos] = useState({ x: 0, y: 0 });
   const [selectedNote, setSelectedNote] = useState(null); // State to keep track of the selected note
+  const [matchingPoints, setMatchingPoints] = useState([]); // State for matching points
+  const [activeChord, setActiveChord] = useState(null); // State for active chord
 
   const svgRef = useRef(null);
   const toneGeneratorRef = useRef(null); // Ref for ToneGenerator
@@ -165,7 +167,15 @@ const DragZoomSvg = ({
 
     while (currentY <= yLimit) {
       trichords.push(
-        <Trichords key={`${currentY}-${col}`} shape={currentPositions} />
+        <Trichords
+          key={`${currentY}-${col}`}
+          shape={currentPositions}
+          scale={scale}
+          tx={tx}
+          ty={ty}
+          setMatchingPoints={setMatchingPoints} // Pass the setter function
+          setActiveChord={setActiveChord} // Pass the setter function for active chord
+        />
       );
       currentPositions = calculateNextNotePositions(currentPositions, yOffset);
       currentY = Math.max(...currentPositions.map((pos) => pos.y));
@@ -182,6 +192,11 @@ const DragZoomSvg = ({
 
   const handleNoteRelease = () => {
     setSelectedNote(null);
+  };
+
+  const handleMouseUp = () => {
+    setMatchingPoints([]); // Clear matching points
+    setActiveChord(null); // Clear active chord
   };
 
   return (
@@ -210,27 +225,41 @@ const DragZoomSvg = ({
               const cy = lineIndex * lineHeight;
               const noteIndex = (startingIndex + index) % notes.length;
               // console.log({ note: notes[noteIndex], x: cx, y: cy });
-              notePositions.push({ note: notes[noteIndex], x: cx, y: cy });
+              // notePositions.push({ note: notes[noteIndex], x: cx, y: cy });
 
               return (
                 <React.Fragment key={`${lineIndex}-${index}`}>
-                <NoteMap note={notes[noteIndex]} x={cx} y={cy} />
-                <Notes
-                  key={`${lineIndex}-${index}-note`}
-                  cx={cx} // Alternate cx position
-                  cy={cy} // Increment cy for each line
-                  r={10}
-                  note={notes[noteIndex]}
-                  onNoteClick={handleNoteClick} // Pass the callback to Notes
-                  onNoteRelease={handleNoteRelease} // Pass the release callback to Notes
-                  selectedNote={selectedNote} // Pass the selected note to Notes
-                />
-              </React.Fragment>
+                  <NoteMap note={notes[noteIndex]} x={cx} y={cy} />
+                  <Notes
+                    key={`${lineIndex}-${index}-note`}
+                    cx={cx} // Alternate cx position
+                    cy={cy} // Increment cy for each line
+                    r={10}
+                    note={notes[noteIndex]}
+                    onNoteClick={handleNoteClick} // Pass the callback to Notes
+                    onNoteRelease={handleNoteRelease} // Pass the release callback to Notes
+                    selectedNote={selectedNote} // Pass the selected note to Notes
+                    className="first-render-note"
+                    />
+                </React.Fragment>
               );
             })}
           </g>
         );
       })}
+      {matchingPoints.map(({ x, y, note }, index) => (
+        <Notes
+          key={`matching-${index}`}
+          cx={x * scale + tx}
+          cy={y * scale + ty}
+          r={20}
+          note={note}
+          onNoteClick={handleNoteClick}
+          onNoteRelease={handleNoteRelease}
+          selectedNote={note}
+          className="re-rendered-note"
+        />
+      ))}
       <foreignObject
         x="0"
         y="0"

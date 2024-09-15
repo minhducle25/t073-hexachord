@@ -1,21 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const noteColors = {
-  "A": "#F5B7B1", // Pastel Orange
-  "A♯": "#F5CBA7", // Pastel Darker Orange
-  "B": "#FAD7A0", // Pastel Red-Orange
-  "C": "#F8C471", // Pastel Red
-  "C♯": "#F7A8A0", // Pastel Crimson
-  "D": "#F6B8C0", // Pastel Firebrick
-  "D♯": "#F4AAB9", // Pastel Dark Red
-  "E": "#F3C6C9", // Pastel Maroon
-  "F": "#F7B7A3", // Pastel Tomato
-  "F♯": "#F6BEAE", // Pastel Coral
-  "G": "#F5B9B7", // Pastel Orange-Red
-  "G♯": "#F5B7A2" // Pastel Dark Orange
+export const noteColors = {
+  A: "#E57373", // Soft Red
+  "A♯": "#FF8A65", // Soft Coral
+  B: "#FFB74D", // Soft Orange
+  C: "#FFD54F", // Soft Yellow
+  "C♯": "#F06292", // Soft Pink
+  D: "#BA68C8", // Soft Purple
+  "D♯": "#9575CD", // Soft Lavender
+  E: "#7986CB", // Soft Blue
+  F: "#4FC3F7", // Soft Light Blue
+  "F♯": "#4DD0E1", // Soft Cyan
+  G: "#4DB6AC", // Soft Teal
+  "G♯": "#81C784", // Soft Green
 };
 
-const Notes = ({ cx, cy, r, note, onNoteClick, onNoteRelease, selectedNote }) => {
+const Notes = ({
+  cx,
+  cy,
+  r,
+  note,
+  onNoteClick,
+  onNoteRelease,
+  selectedNote,
+  className = '', // Provide a default value for className
+}) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleMouseDown = () => {
@@ -33,11 +42,12 @@ const Notes = ({ cx, cy, r, note, onNoteClick, onNoteRelease, selectedNote }) =>
   };
 
   const isSelected = note === selectedNote;
-  const fillColor = isSelected ? noteColors[note] : 'white';
+  const fillColor = isSelected ? noteColors[note] : "white";
+  const fontSize = className.includes('re-rendered-note') ? '26px' : '12px';
 
   return (
     <g
-      className="note-circle group"
+      className={`note-circle group ${className}`} // Apply the className prop
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
     >
@@ -45,16 +55,19 @@ const Notes = ({ cx, cy, r, note, onNoteClick, onNoteRelease, selectedNote }) =>
         cx={cx}
         cy={cy}
         r={r}
-        className={`stroke-gray-400 group-hover:stroke-gray-600 ${isClicked ? 'fill-red-500' : ''}`}
+        className={`stroke-gray-400 group-hover:stroke-red-600 ${
+          isClicked ? "fill-red-500" : ""
+        }`}
         fill={fillColor}
       />
       <text
         x={cx}
         y={cy}
-        className="fill-gray-400 text-[14px] group-hover:fill-gray-600"
+        className="fill-slate-950"
         style={{
-          textAnchor: 'middle',
-          dominantBaseline: 'central',
+          textAnchor: "middle",
+          dominantBaseline: "central",
+          fontSize: fontSize,
         }}
       >
         {note}
