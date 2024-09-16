@@ -1,19 +1,21 @@
-import React, { useRef, useEffect, useImperativeHandle } from 'react';
+import React, { useRef, useImperativeHandle } from 'react';
 import * as Tone from 'tone';
 
 const ToneGenerator = React.forwardRef((props, ref) => {
   const synthRef = useRef(null);
 
-  useEffect(() => {
-    synthRef.current = new Tone.PolySynth(Tone.Synth).toDestination();
-    return () => {
-      synthRef.current.dispose();
-    };
-  }, []);
+  const initializeSynth = async () => {
+    if (!synthRef.current) {
+      synthRef.current = new Tone.PolySynth(Tone.Synth).toDestination();
+    }
+    if (Tone.context.state !== 'running') {
+      await Tone.context.resume();
+    }
+  };
 
   useImperativeHandle(ref, () => ({
     playNoteWithY: async (note, y) => {
-      await Tone.start(); // Ensure Tone.js is started
+      await initializeSynth();
 
       // Replace Unicode sharp symbol with standard sharp symbol
       const standardizedNote = note.replace('♯', '#');
@@ -58,7 +60,7 @@ const ToneGenerator = React.forwardRef((props, ref) => {
       }
     },
     playChord: async (notes) => {
-      await Tone.start(); // Ensure Tone.js is started
+      await initializeSynth();
 
       const notesWithOctave = notes.map(note => {
         // Replace Unicode sharp symbol with standard sharp symbol
