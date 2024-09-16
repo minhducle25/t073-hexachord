@@ -1,7 +1,8 @@
 // Dichords.jsx
 
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import ToneGenerator from '../ToneGenerator'; // Import ToneGenerator
+import { debounce } from 'lodash';
 
 const Dichords = ({ points, onSideClick }) => {
   const toneGeneratorRef = useRef(null); // Create a ref for ToneGenerator
@@ -20,18 +21,24 @@ const Dichords = ({ points, onSideClick }) => {
     return { x, y };
   });
 
+    // Debounced function to handle side click
+    const handleSideClick = useCallback(
+      debounce((index) => {
+        const notes = onSideClick(index);
+        if (toneGeneratorRef.current) {
+          toneGeneratorRef.current.playChord(notes);
+        }
+      }, 300), // Adjust the debounce delay as needed
+      []
+    );
+
   // Generate paths and circles for each side of the polygon
   const sides = pointsArray.map((point, index) => {
     const nextPoint = pointsArray[(index + 1) % pointsArray.length];
     const midpoint = calculateMidpoint(point.x, point.y, nextPoint.x, nextPoint.y);
 
     return (
-      <g key={index} onClick={() => {
-        const notes = onSideClick(index);
-        if (toneGeneratorRef.current) {
-          toneGeneratorRef.current.playChord(notes);
-        }
-      }}>
+      <g key={index} onClick={() => handleSideClick(index)}>
         <path
           d={`M${point.x},${point.y} L${nextPoint.x},${nextPoint.y}`}
           className="stroke-transparent hover:stroke-violet-900"
