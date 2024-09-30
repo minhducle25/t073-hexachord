@@ -44,7 +44,7 @@ const Dichords = ({ points, onSideClick }) => {
           cx={midpoint.x}
           cy={midpoint.y}
           r="5"
-          className="fill-black hover:fill-indigo-500"
+          className="fill-white stroke-black hover:fill-indigo-500"
           cursor="pointer"
           style={{ zIndex: 10, pointerEvents: 'all' }}
         />
