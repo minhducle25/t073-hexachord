@@ -1,42 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PianoApp from "../PianoApp";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
+  const sidebarRef = useRef(null);
+
+  const handleOutsideClick = (e) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+      setOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, [open]);
 
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div>
-        {open && (
-          <div className="fixed inset-0 z-50 overflow-hidden">
-            <div className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-            <section className="absolute inset-y-0 right-0 pl-10 max-w-full flex">
-              <div className="w-screen max-w-md">
-                <div className="h-full flex flex-col py-6 bg-white shadow-xl">
-                  <div className="flex items-center justify-between px-4">
-                    <h2 className="text-xl font-semibold text-black">Sidebar</h2>
-                    <button onClick={() => setOpen(false)} className="text-gray-500 hover:text-gray-700">
-                      <span className="sr-only">Close</span>
-                      <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="mt-4 px-4 flex-1 overflow-auto">
-                    <div className="h-16 w-full">
-                      <PianoApp />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+        <div
+          id="sidebar-overlay"
+          className={`fixed inset-0 z-50 overflow-hidden transition-opacity duration-1000 ease-in-out ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        >
+          <div className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-1000 ease-in-out"></div>
+          <div
+            id="drawer-right-example"
+            ref={sidebarRef}
+            className={`fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform ${open ? 'translate-x-0' : 'translate-x-full'} bg-white w-[28rem] dark:bg-gray-800`}
+            tabIndex="-1"
+            aria-labelledby="drawer-right-label"
+          >
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 right-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+              </svg>
+              <span className="sr-only">Close menu</span>
+            </button>
+            <div className="mt-4 px-4 flex-1 overflow-auto">
+              <PianoApp />
+            </div>
           </div>
-        )}
-        {!open && (
-          <button onClick={() => setOpen(true)} className="px-4 py-2 bg-black text-white rounded-md">
-            Open Sidebar
-          </button>
-        )}
+        </div>
+        <button
+          onClick={() => setOpen(true)}
+          className="fixed bottom-4 right-4 p-4 bg-black text-white rounded-full shadow-lg transform transition duration-1000 ease-in-out hover:scale-110"
+        >
+          <span className="sr-only">Open Sidebar</span>
+          <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12h18M12 3v18"></path>
+          </svg>
+        </button>
       </div>
     </div>
   );
