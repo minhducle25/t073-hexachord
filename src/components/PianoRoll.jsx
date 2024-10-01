@@ -12,7 +12,7 @@ const ALL_NOTES = OCTAVES.reduce((acc, octave) => {
 
 const TIME_UNITS = 32
 
-const NoteBlock = ({ note, start, duration, onDrag, onResize }) => {
+const NoteBlock = ({ id, note, start, duration, onDrag, onResize, onRightClick }) => {
   const [isDragging, setIsDragging] = useState(false)
   const [isResizing, setIsResizing] = useState(false)
   const [dragStartX, setDragStartX] = useState(0)
@@ -49,11 +49,11 @@ const NoteBlock = ({ note, start, duration, onDrag, onResize }) => {
     if (isDragging) {
       setIsDragging(false)
       const newStart = Math.round((currentLeft / 100) * TIME_UNITS)
-      onDrag(note, newStart)
+      onDrag(id, newStart)
     } else if (isResizing) {
       setIsResizing(false)
       const newDuration = Math.round((currentWidth / 100) * TIME_UNITS)
-      onResize(note, newDuration)
+      onResize(id, newDuration)
     }
   }
 
@@ -82,6 +82,10 @@ const NoteBlock = ({ note, start, duration, onDrag, onResize }) => {
         zIndex: 1, // Ensure NoteBlock is above the grid
       }}
       onMouseDown={handleMouseDown}
+      onContextMenu={(e) => {
+        e.preventDefault()
+        onRightClick(id)
+      }}
     >
       <div
         className="absolute right-0 top-0 h-full w-2 cursor-ew-resize"
@@ -119,6 +123,7 @@ export default function PianoRoll() {
       const arrayBuffer = await file.arrayBuffer()
       const midi = new Midi(arrayBuffer)
       const newNotes = midi.tracks[0].notes.map(note => ({
+        id: Date.now() + Math.random(), // Ensure unique id
         note: note.name,
         start: Math.round(note.ticks / midi.header.ppq), // Quantize start
         duration: Math.round(note.durationTicks / midi.header.ppq), // Quantize duration
@@ -128,40 +133,59 @@ export default function PianoRoll() {
   }
 
   const exportMidi = () => {
-    // Placeholder for MIDI export functionality
     console.log('Export MIDI')
   }
 
   const playNotes = () => {
-    const synth = new Tone.Synth().toDestination()
-    // Sort notes by start time
+    const synth = new Tone.PolySynth(Tone.Synth).toDestination()
     const sortedNotes = [...notes].sort((a, b) => a.start - b.start)
     console.log('Sorted Notes:', sortedNotes)
-    sortedNotes.forEach((note, index) => {
+  
+    const notesByStartTime = sortedNotes.reduce((acc, note) => {
       const time = note.start / TIME_UNITS
-      const duration = note.duration / TIME_UNITS
-      // Ensure start time is strictly greater than the previous start time
-      if (index === 0 || time > sortedNotes[index - 1].start / TIME_UNITS) {
-        console.log(`Scheduling note: ${note.note}, Time: ${time}, Duration: ${duration}`)
-        Tone.Transport.schedule(time => {
-          synth.triggerAttackRelease(note.note, duration, time)
-        }, time)
-      } else {
-        console.warn(`Skipped note: ${note.note}, Time: ${time}, Duration: ${duration} due to overlapping start time`)
+      if (!acc[time]) {
+        acc[time] = []
       }
+      acc[time].push(note)
+      return acc
+    }, {})
+  
+    Object.keys(notesByStartTime).forEach(time => {
+      const notesAtTime = notesByStartTime[time]
+      console.log(`Scheduling notes at time: ${time}`, notesAtTime)
+      Tone.Transport.schedule(time => {
+        notesAtTime.forEach(note => {
+          let duration = note.duration / TIME_UNITS
+          if (duration <= 0) {
+            duration = 0.01
+          }
+          synth.triggerAttackRelease(note.note, duration, time, note.velocity)
+        })
+      }, time)
     })
   }
 
-  const handleNoteDrag = (note, newStart) => {
+  const handleNoteDrag = (id, newStart) => {
     setNotes(prevNotes =>
-      prevNotes.map(n => (n.note === note ? { ...n, start: newStart } : n))
+      prevNotes.map(n => (n.id === id ? { ...n, start: newStart } : n))
     )
   }
 
-  const handleNoteResize = (note, newDuration) => {
+  const handleNoteResize = (id, newDuration) => {
     setNotes(prevNotes =>
-      prevNotes.map(n => (n.note === note ? { ...n, duration: newDuration } : n))
+      prevNotes.map(n => (n.id === id ? { ...n, duration: newDuration } : n))
     )
+  }
+
+  const handleCellClick = (note, start) => {
+    setNotes(prevNotes => [
+      ...prevNotes,
+      { id: Date.now() + Math.random(), note, start, duration: 5 } // Ensure unique id
+    ])
+  }
+
+  const handleNoteRightClick = (id) => {
+    setNotes(prevNotes => prevNotes.filter(n => n.id !== id))
   }
 
   return (
@@ -228,17 +252,22 @@ export default function PianoRoll() {
               {Array.from({ length: TIME_UNITS * ALL_NOTES.length }).map((_, index) => (
                 <div
                   key={index}
-                  className={`h-5 border-r border-b border-gray-300 ${
+                  className={`h-5 border-r border-b border-gray-300 hover:bg-gray-400 ${
                     index % 32 === 0 ? 'border-l' : ''
                   }`}
+                  onClick={() => handleCellClick(ALL_NOTES[Math.floor(index / TIME_UNITS)], index % TIME_UNITS)}
                 ></div>
               ))}
             </div>
-            <div className="absolute top-0 left-0 w-full h-full">
-              {notes.map((note, index) => (
-                <NoteBlock key={index} {...note} onDrag={handleNoteDrag} onResize={handleNoteResize} />
-              ))}
-            </div>
+            {notes.map((note) => (
+              <NoteBlock
+                key={note.id}
+                {...note}
+                onDrag={handleNoteDrag}
+                onResize={handleNoteResize}
+                onRightClick={handleNoteRightClick}
+              />
+            ))}
           </div>
         </div>
       </div>
