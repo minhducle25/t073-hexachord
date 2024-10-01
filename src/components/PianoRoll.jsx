@@ -12,22 +12,82 @@ const ALL_NOTES = OCTAVES.reduce((acc, octave) => {
 
 const TIME_UNITS = 32
 
-const NoteBlock = ({ note, start, duration }) => {
+const NoteBlock = ({ note, start, duration, onDrag, onResize }) => {
+  const [isDragging, setIsDragging] = useState(false)
+  const [isResizing, setIsResizing] = useState(false)
+  const [dragStartX, setDragStartX] = useState(0)
+  const [resizeStartX, setResizeStartX] = useState(0)
+  const [currentLeft, setCurrentLeft] = useState((start / TIME_UNITS) * 100)
+  const [currentWidth, setCurrentWidth] = useState((duration / TIME_UNITS) * 100)
+
   const top = ALL_NOTES.indexOf(note) * 20
-  const left = (start / TIME_UNITS) * 100
-  const width = (duration / TIME_UNITS) * 100
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true)
+    setDragStartX(e.clientX)
+  }
+
+  const handleResizeMouseDown = (e) => {
+    e.stopPropagation()
+    setIsResizing(true)
+    setResizeStartX(e.clientX)
+  }
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      const deltaX = e.clientX - dragStartX
+      const newLeft = Math.round((currentLeft + (deltaX / e.target.parentElement.offsetWidth) * 100) / (100 / TIME_UNITS)) * (100 / TIME_UNITS)
+      setCurrentLeft(newLeft)
+    } else if (isResizing) {
+      const deltaX = e.clientX - resizeStartX
+      const newWidth = Math.max(100 / TIME_UNITS, Math.round((currentWidth + (deltaX / e.target.parentElement.offsetWidth) * 100) / (100 / TIME_UNITS)) * (100 / TIME_UNITS))
+      setCurrentWidth(newWidth)
+    }
+  }
+
+  const handleMouseUp = () => {
+    if (isDragging) {
+      setIsDragging(false)
+      const newStart = Math.round((currentLeft / 100) * TIME_UNITS)
+      onDrag(note, newStart)
+    } else if (isResizing) {
+      setIsResizing(false)
+      const newDuration = Math.round((currentWidth / 100) * TIME_UNITS)
+      onResize(note, newDuration)
+    }
+  }
+
+  useEffect(() => {
+    if (isDragging || isResizing) {
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    } else {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isDragging, isResizing])
 
   return (
     <div
-      className="absolute bg-blue-500 opacity-75 border border-blue-700"
+      className="absolute bg-blue-500 opacity-75 border border-blue-700 cursor-pointer"
       style={{
         top: `${top}px`,
-        left: `${left}%`,
-        width: `${width}%`,
+        left: `${currentLeft}%`,
+        width: `${currentWidth}%`,
         height: '20px',
         zIndex: 1, // Ensure NoteBlock is above the grid
       }}
-    ></div>
+      onMouseDown={handleMouseDown}
+    >
+      <div
+        className="absolute right-0 top-0 h-full w-2 cursor-ew-resize"
+        onMouseDown={handleResizeMouseDown}
+      ></div>
+    </div>
   )
 }
 
@@ -74,13 +134,34 @@ export default function PianoRoll() {
 
   const playNotes = () => {
     const synth = new Tone.Synth().toDestination()
-    notes.forEach(note => {
+    // Sort notes by start time
+    const sortedNotes = [...notes].sort((a, b) => a.start - b.start)
+    console.log('Sorted Notes:', sortedNotes)
+    sortedNotes.forEach((note, index) => {
       const time = note.start / TIME_UNITS
       const duration = note.duration / TIME_UNITS
-      Tone.Transport.schedule(time => {
-        synth.triggerAttackRelease(note.note, duration, time)
-      }, time)
+      // Ensure start time is strictly greater than the previous start time
+      if (index === 0 || time > sortedNotes[index - 1].start / TIME_UNITS) {
+        console.log(`Scheduling note: ${note.note}, Time: ${time}, Duration: ${duration}`)
+        Tone.Transport.schedule(time => {
+          synth.triggerAttackRelease(note.note, duration, time)
+        }, time)
+      } else {
+        console.warn(`Skipped note: ${note.note}, Time: ${time}, Duration: ${duration} due to overlapping start time`)
+      }
     })
+  }
+
+  const handleNoteDrag = (note, newStart) => {
+    setNotes(prevNotes =>
+      prevNotes.map(n => (n.note === note ? { ...n, start: newStart } : n))
+    )
+  }
+
+  const handleNoteResize = (note, newDuration) => {
+    setNotes(prevNotes =>
+      prevNotes.map(n => (n.note === note ? { ...n, duration: newDuration } : n))
+    )
   }
 
   return (
@@ -155,7 +236,7 @@ export default function PianoRoll() {
             </div>
             <div className="absolute top-0 left-0 w-full h-full">
               {notes.map((note, index) => (
-                <NoteBlock key={index} {...note} />
+                <NoteBlock key={index} {...note} onDrag={handleNoteDrag} onResize={handleNoteResize} />
               ))}
             </div>
           </div>
