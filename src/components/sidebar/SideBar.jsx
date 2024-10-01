@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import PianoApp from "../PianoApp";
+import PianoRoll from "../PianoRoll";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
@@ -48,7 +48,7 @@ const Sidebar = () => {
               <span className="sr-only">Close menu</span>
             </button>
             <div className="mt-4 px-4 flex-1 overflow-auto">
-              <PianoApp />
+              <PianoRoll />
             </div>
           </div>
         </div>
