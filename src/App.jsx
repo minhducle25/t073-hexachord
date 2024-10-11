@@ -25,7 +25,6 @@ const App = () => {
         <CircleView />
         <Sidebar />
       </div>
-
       <div>
         <LoopPlayer />
       </div>

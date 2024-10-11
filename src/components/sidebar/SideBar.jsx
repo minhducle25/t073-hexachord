@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import PianoRoll from "../PianoRoll";
+import PianoRoll from "../PianoRoll/PianoRoll";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
