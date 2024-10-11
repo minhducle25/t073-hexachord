@@ -3,7 +3,7 @@ import { Rnd } from "react-rnd";
 import { FixedSizeList as List } from 'react-window';
 
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
-const OCTAVES = [2, 3, 4, 5, 6, 7, 8];
+const OCTAVES = [2, 3, 4, 5, 6, 7];
 const CELL_WIDTH = 50;
 const CELL_HEIGHT = 20;
 const TOTAL_BEATS = 16;
@@ -66,7 +66,10 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
         NOTES.slice()
           .reverse()
           .map((note) => (
-            <div key={`${note}${octave}`} className="border-t border-r border-gray-200 h-5">
+            <div
+              key={`${note}${octave}`}
+              className={`border-t border-r border-gray-200 h-5 ${note.includes('#') ? 'bg-gray-300' : ''}`}
+            >
               <span className="text-xs text-gray-500 pl-1">{`${note}${octave - 1}`}</span>
             </div>
           ))
@@ -82,7 +85,7 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
   const renderTimeGrid = useCallback(() => {
     return (
       <List
-        height={30}
+        height={30} // Adjust height as needed
         itemCount={TOTAL_BEATS}
         itemSize={CELL_WIDTH}
         layout="horizontal"

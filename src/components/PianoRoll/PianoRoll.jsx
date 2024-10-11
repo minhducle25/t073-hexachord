@@ -56,7 +56,7 @@ export default function PianoRoll() {
       id: nextId.current,
       pitch,
       time,
-      duration: 3,
+      duration: 1,
       velocity: 1,
     };
 
