@@ -23,10 +23,12 @@ const Notes = ({
   onNoteClick,
   onNoteRelease,
   selectedNote,
-  className = '', // Provide a default value for className
+  className = '',
 }) => {
   const [isClicked, setIsClicked] = useState(false);
-
+  
+  // console.log(cx, cy, r, note, onNoteClick, onNoteRelease, selectedNote, className);
+  
   const handleMouseDown = () => {
     setIsClicked(true);
     if (onNoteClick) {

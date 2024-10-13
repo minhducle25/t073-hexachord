@@ -1,18 +1,20 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect, useContext } from "react";
 import * as Tone from "tone";
-import {Midi} from "@tonejs/midi";
+import { Midi } from "@tonejs/midi";
 import { MdFileUpload, MdFileDownload } from "react-icons/md";
-import { FaPlay, FaStop } from 'react-icons/fa';
-import { saveAs } from 'file-saver';
+import { FaPlay, FaStop } from "react-icons/fa";
+import { saveAs } from "file-saver";
 import PianoRollGrid from "./PianoRollGrid";
+import { PlayingContext } from "../../context/PlayingContext";
 
 const initialNotes = [];
 
 export default function PianoRoll() {
-  const [notes, setNotes] = useState(initialNotes);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { isPlaying, setIsPlaying, isPlayingNotes, setIsPlayingNotes } = useContext(PlayingContext); // Use the context
   const [totalBeats, setTotalBeats] = useState(16);
-  const nextId = useRef(notes.length > 0 ? Math.max(...notes.map((note) => note.id)) + 1 : 1);
+  const nextId = useRef(
+    isPlayingNotes.length > 0 ? Math.max(...isPlayingNotes.map((note) => note.id)) + 1 : 1
+  );
   const synth = useRef(null);
   const midiWorkerRef = useRef(null);
   const partRef = useRef(null);
@@ -25,25 +27,29 @@ export default function PianoRoll() {
   }, []);
 
   useEffect(() => {
-    midiWorkerRef.current = new Worker(new URL('./midiWorker.js', import.meta.url));
+    midiWorkerRef.current = new Worker(
+      new URL("./midiWorker.js", import.meta.url)
+    );
     midiWorkerRef.current.onmessage = (e) => {
       const importedNotes = e.data;
-      setNotes(importedNotes);
+      setIsPlayingNotes(importedNotes);
 
       // Calculate the total number of beats required
-      const maxTime = Math.max(...importedNotes.map(note => note.time + note.duration));
+      const maxTime = Math.max(
+        ...importedNotes.map((note) => note.time + note.duration)
+      );
       setTotalBeats(Math.ceil(maxTime));
     };
     return () => {
       midiWorkerRef.current.terminate();
     };
-  }, []);
+  }, [setIsPlayingNotes]);
 
   const handleNoteChange = useCallback((id, changes) => {
-    setNotes((prevNotes) =>
+    setIsPlayingNotes((prevNotes) =>
       prevNotes.map((note) => (note.id === id ? { ...note, ...changes } : note))
     );
-  }, []);
+  }, [setIsPlayingNotes]);
 
   const handleNoteCreate = useCallback((e) => {
     const rect = e.target.getBoundingClientRect();
@@ -60,26 +66,31 @@ export default function PianoRoll() {
       velocity: 1,
     };
 
-    setNotes((prevNotes) => [...prevNotes, newNote]);
+    setIsPlayingNotes((prevNotes) => [...prevNotes, newNote]);
     nextId.current += 1;
-  }, []);
+  }, [setIsPlayingNotes]);
 
   const handleNoteDelete = useCallback((id, e) => {
     e.preventDefault();
-    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
-  }, []);
+    setIsPlayingNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+  }, [setIsPlayingNotes]);
 
   const handleClearNotes = () => {
     const chunkSize = 1000; // Adjust the chunk size as needed
-    const worker = new Worker(new URL('./clearNotesWorker.js', import.meta.url), { type: 'module' });
+    const worker = new Worker(
+      new URL("./clearNotesWorker.js", import.meta.url),
+      { type: "module" }
+    );
 
-    worker.postMessage({ notes, chunkSize });
+    worker.postMessage({ notes: isPlayingNotes, chunkSize });
 
     worker.onmessage = (e) => {
-      if (e.data.type === 'chunk') {
+      if (e.data.type === "chunk") {
         const chunk = e.data.chunk;
-        setNotes((prevNotes) => prevNotes.filter(note => !chunk.includes(note)));
-      } else if (e.data.type === 'done') {
+        setIsPlayingNotes((prevNotes) =>
+          prevNotes.filter((note) => !chunk.includes(note))
+        );
+      } else if (e.data.type === "done") {
         setTotalBeats(16); // Reset total beats to initial value or any default value
         if (midiWorkerRef.current) {
           midiWorkerRef.current.postMessage(new ArrayBuffer(0)); // Send an empty ArrayBuffer to reset the worker's state
@@ -95,32 +106,37 @@ export default function PianoRoll() {
     } else {
       setIsPlaying(true);
 
-      const part = new Tone.Part((time, note) => {
-        synth.current.triggerAttackRelease(
-          Tone.Frequency(note.pitch, "midi"),
-          note.duration,
-          time,
-          note.velocity
-        );
-      }, notes.map(note => ({
-        time: note.time,
-        pitch: note.pitch,
-        duration: note.duration,
-        velocity: note.velocity
-      }))).start(0);
+      const part = new Tone.Part(
+        (time, note) => {
+          synth.current.triggerAttackRelease(
+            Tone.Frequency(note.pitch, "midi"),
+            note.duration,
+            time,
+            note.velocity
+          );
+        },
+        isPlayingNotes.map((note) => ({
+          time: note.time,
+          pitch: note.pitch,
+          duration: note.duration,
+          velocity: note.velocity,
+        }))
+      ).start(0);
 
       part.loop = false;
       Tone.Transport.start();
       partRef.current = part;
 
-      const maxTime = Math.max(...notes.map(note => note.time + note.duration));
+      const maxTime = Math.max(
+        ...isPlayingNotes.map((note) => note.time + note.duration)
+      );
       setTimeout(() => {
         setIsPlaying(false);
         Tone.Transport.stop();
         part.dispose();
       }, (maxTime + 1) * 1000);
     }
-  }, [isPlaying, notes]);
+  }, [isPlaying, isPlayingNotes, setIsPlaying]);
 
   const stopNotes = useCallback(() => {
     setIsPlaying(false);
@@ -129,7 +145,7 @@ export default function PianoRoll() {
       partRef.current.dispose();
       partRef.current = null;
     }
-  }, []);
+  }, [setIsPlaying]);
 
   const importMidi = async (e) => {
     const file = e.target.files[0];
@@ -143,7 +159,7 @@ export default function PianoRoll() {
     const midi = new Midi();
     const track = midi.addTrack();
 
-    notes.forEach(note => {
+    isPlayingNotes.forEach((note) => {
       if (note.duration > 0) {
         track.addNote({
           midi: note.pitch,
@@ -155,8 +171,8 @@ export default function PianoRoll() {
     });
 
     const midiData = midi.toArray();
-    const blob = new Blob([midiData], { type: 'audio/midi' });
-    saveAs(blob, 'exported_midi.mid');
+    const blob = new Blob([midiData], { type: "audio/midi" });
+    saveAs(blob, "exported_midi.mid");
   };
 
   return (
@@ -192,13 +208,14 @@ export default function PianoRoll() {
         </button>
       </div>
       <PianoRollGrid
-        notes={notes}
-        setNotes={setNotes}
+        notes={isPlayingNotes}
+        setNotes={setIsPlayingNotes}
         handleNoteChange={handleNoteChange}
         handleNoteDelete={handleNoteDelete}
         handleNoteCreate={handleNoteCreate}
         totalBeats={totalBeats}
       />
+      {/* <Connector notes={isPlayingNotes} isPlaying={isPlaying} /> */}
     </div>
   );
 }

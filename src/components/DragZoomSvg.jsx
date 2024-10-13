@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import TonnetzSelector from "./TonnetzSelector";
 import Notes, { noteColors } from "./Chords/Notes";
 import Trichords from "./Chords/Trichords";
@@ -6,6 +6,8 @@ import BottomDrawer from "./BottomDrawer";
 import ToneGenerator from "./ToneGenerator"; // Import ToneGenerator
 import NoteMap from "./NoteMap";
 import { getStartingNote, notes } from "./noteUtils"; // Import the utility function and notes array
+import { PlayingContext } from "../context/PlayingContext";
+import Connector from "./PianoRoll/Connector";
 
 const notePositions = [];
 
@@ -26,6 +28,7 @@ const DragZoomSvg = ({
   children,
 }) => {
   // State to handle transformations and interactions
+  const { isPlaying, isPlayingNotes } = useContext(PlayingContext); // Use the context
   const [tx, setTx] = useState(0);
   const [ty, setTy] = useState(0);
   const [scale, setScale] = useState(2);
@@ -51,6 +54,15 @@ const DragZoomSvg = ({
   useEffect(() => {
     if (lock) captureOff();
   }, [lock]);
+
+  // useEffect(() => {
+  //   if (isPlaying) {
+  //     console.log("playing");
+  //     console.log("Notes:", isPlayingNotes);
+  //   } else {
+  //     console.log("stopped");
+  //   }
+  // }, [isPlaying, isPlayingNotes]);
 
   // Functions to handle zoom, drag, and pan
   const zoomInOut = (wheelEvent) => {
@@ -240,7 +252,7 @@ const DragZoomSvg = ({
                     onNoteRelease={handleNoteRelease} // Pass the release callback to Notes
                     selectedNote={selectedNote} // Pass the selected note to Notes
                     className="first-render-note"
-                    />
+                  />
                 </React.Fragment>
               );
             })}
@@ -278,6 +290,13 @@ const DragZoomSvg = ({
         </div>
       </foreignObject>
       <ToneGenerator ref={toneGeneratorRef} />{" "}
+      <Connector
+        isPlaying={isPlaying}
+        isPlayingNotes={isPlayingNotes}
+        scale={scale}
+        tx={tx}
+        ty={ty}
+      />
       {/* Pass the ref to ToneGenerator */}
     </svg>
   );
