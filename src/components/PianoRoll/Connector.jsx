@@ -14,11 +14,12 @@ const replaceSharpWithSymbol = (noteName) => {
 
 const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
   const [renderedNotes, setRenderedNotes] = useState([]);
-  const [playingNoteIndex, setPlayingNoteIndex] = useState(0);
+  const [debugClock, setDebugClock] = useState(0); // For debugging note timings
 
   useEffect(() => {
     if (isPlaying && isPlayingNotes.length > 0) {
       setRenderedNotes([]); // Clear the rendered notes before starting
+      setDebugClock(0); // Reset the debug clock
 
       // Group notes by their start time
       const notesByTime = isPlayingNotes.reduce((acc, note) => {
@@ -29,15 +30,14 @@ const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
         return acc;
       }, {});
 
-      const times = Object.keys(notesByTime).map(time => parseFloat(time)).sort((a, b) => a - b);
+      // Sort the times for sequential processing
+      const sortedTimes = Object.keys(notesByTime).map(time => parseFloat(time)).sort((a, b) => a - b);
 
-      const handleNotesAtTime = (timeIndex) => {
-        if (timeIndex >= times.length) return;
-
-        const time = times[timeIndex];
+      sortedTimes.forEach((time, index) => {
         const notes = notesByTime[time];
 
-        const renderNotes = () => {
+        // Schedule rendering of notes at this time
+        setTimeout(() => {
           const newRenderedNotes = notes.flatMap(note => {
             let noteName = midiToNote(note.pitch);
             noteName = replaceSharpWithSymbol(noteName);
@@ -50,6 +50,7 @@ const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
                 y: position.y,
                 noteName: noteName,
                 className: 're-rendered-note',
+                endTime: time + note.duration, // Store the end time for each note
               }));
             }
             return [];
@@ -57,22 +58,20 @@ const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
 
           setRenderedNotes(prevNotes => [...prevNotes, ...newRenderedNotes]);
 
-          // Clear the rendered notes for the previous notes and handle the next group of notes immediately
-          setTimeout(() => {
-            requestAnimationFrame(() => {
-              setRenderedNotes([]);
-              handleNotesAtTime(timeIndex + 1); // Handle the next group of notes immediately
-            });
-          }, Math.max(...notes.map(note => note.duration)) * 1000); // Adjust the delay based on the longest note duration
-        };
+          // Update the debug clock for visualization
+          setDebugClock(time);
 
-        setTimeout(renderNotes, time * 1000);
-      };
-
-      handleNotesAtTime(playingNoteIndex);
+          // Remove each note based on its individual end time
+          newRenderedNotes.forEach(renderedNote => {
+            setTimeout(() => {
+              setRenderedNotes(prevNotes => prevNotes.filter(note => note.id !== renderedNote.id));
+            }, renderedNote.duration * 1500); // Keep the note rendered for its full duration
+          });
+        }, time * 1000); // Convert time to milliseconds
+      });
     } else {
       setRenderedNotes([]);
-      setPlayingNoteIndex(0);
+      setDebugClock(0);
     }
   }, [isPlayingNotes, isPlaying]);
 
@@ -91,6 +90,9 @@ const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
           className="re-rendered-note" // Pass the className to the Notes component
         />
       ))}
+      <div className="debug-clock">
+        Debug Clock: {debugClock.toFixed(2)} seconds
+      </div>
     </>
   );
 };
