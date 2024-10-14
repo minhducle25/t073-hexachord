@@ -6,12 +6,14 @@ const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const OCTAVES = [2, 3, 4, 5, 6, 7];
 const CELL_WIDTH = 50;
 const CELL_HEIGHT = 20;
-const TOTAL_BEATS = 16;
 const TOTAL_PITCHES = OCTAVES.length * NOTES.length;
 const LOWEST_PITCH = OCTAVES[0] * 12;
 
-const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, handleNoteCreate }) => {
+const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, handleNoteCreate, totalBeats }) => {
   const gridRef = useRef(null);
+
+  // Log totalBeats when the component receives it as a prop
+  console.log("PianoRollGrid received totalBeats:", totalBeats);
 
   const renderNote = useCallback(
     ({ id, pitch, time, duration }) => {
@@ -30,6 +32,8 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
           }}
           bounds="parent"
           onDragStop={(e, d) => {
+            console.log(d);
+            
             const newTime = d.x / CELL_WIDTH;
             const newPitch = pitch;
             handleNoteChange(id, { time: newTime, pitch: newPitch });
@@ -83,18 +87,21 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
   );
 
   const renderTimeGrid = useCallback(() => {
+    // Log totalBeats when it is used in renderTimeGrid
+    console.log("Rendering time grid with totalBeats:", totalBeats);
+
     return (
       <List
-        height={30} // Adjust height as needed
-        itemCount={TOTAL_BEATS}
+        height={30}
+        itemCount={totalBeats} // Use totalBeats prop
         itemSize={CELL_WIDTH}
         layout="horizontal"
-        width={TOTAL_BEATS * CELL_WIDTH}
+        width={totalBeats * CELL_WIDTH} // Use totalBeats prop
       >
         {TimeGridItem}
       </List>
     );
-  }, []);
+  }, [totalBeats]);
 
   return (
     <div className="relative w-full max-w-4xl h-[600px] overflow-auto border border-gray-300 bg-white">
@@ -102,14 +109,14 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
         <div className="grid grid-rows-[auto_1fr] h-full">
           <div className="grid grid-cols-[auto_1fr]">
             <div className="w-12 bg-gray-100"></div>
-            <div className="grid grid-cols-[repeat(16,50px)]">
+            <div className={`grid grid-cols-[repeat(${totalBeats},50px)]`}>
               {renderTimeGrid()}
             </div>
           </div>
           <div className="grid grid-cols-[auto_1fr] h-full">
             <div className="w-12 bg-gray-100">{renderGrid()}</div>
             <div className="relative" ref={gridRef} onDoubleClick={handleNoteCreate}>
-              <div className="absolute inset-0 grid grid-cols-[repeat(16,50px)] grid-rows-[repeat(72,20px)]">
+              <div className={`absolute inset-0 grid grid-cols-[repeat(${totalBeats},50px)] grid-rows-[repeat(72,20px)]`}>
                 {notes.filter((note) => note.duration > 0).map(renderNote)}
               </div>
             </div>

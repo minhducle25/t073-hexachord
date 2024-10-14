@@ -6,12 +6,15 @@ import { FaPlay, FaStop } from "react-icons/fa";
 import { saveAs } from "file-saver";
 import PianoRollGrid from "./PianoRollGrid";
 import { PlayingContext } from "../../context/PlayingContext";
+import ClearNotes from "./ClearNotes"; // Import the updated component
 
 const initialNotes = [];
 
 export default function PianoRoll() {
   const { isPlaying, setIsPlaying, isPlayingNotes, setIsPlayingNotes } = useContext(PlayingContext); // Use the context
   const [totalBeats, setTotalBeats] = useState(16);
+  const [key, setKey] = useState(0); // Add a key state
+  const [renderPianoRoll, setRenderPianoRoll] = useState(true); // Add renderPianoRoll state
   const nextId = useRef(
     isPlayingNotes.length > 0 ? Math.max(...isPlayingNotes.map((note) => note.id)) + 1 : 1
   );
@@ -33,18 +36,18 @@ export default function PianoRoll() {
     midiWorkerRef.current.onmessage = (e) => {
       const importedNotes = e.data;
       setIsPlayingNotes(importedNotes);
-
+  
       // Calculate the total number of beats required
-      const maxTime = Math.max(
-        ...importedNotes.map((note) => note.time + note.duration)
-      );
-      setTotalBeats(Math.ceil(maxTime));
+      const maxTime = importedNotes.length > 0
+        ? Math.max(...importedNotes.map((note) => note.time + note.duration))
+        : 16; // Default value when there are no notes
+      setTotalBeats(Math.ceil(maxTime) || 16); // Ensure totalBeats is never set to -Infinity
     };
     return () => {
       midiWorkerRef.current.terminate();
     };
   }, [setIsPlayingNotes]);
-
+  
   const handleNoteChange = useCallback((id, changes) => {
     setIsPlayingNotes((prevNotes) =>
       prevNotes.map((note) => (note.id === id ? { ...note, ...changes } : note))
@@ -74,31 +77,6 @@ export default function PianoRoll() {
     e.preventDefault();
     setIsPlayingNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
   }, [setIsPlayingNotes]);
-
-  const handleClearNotes = () => {
-    const chunkSize = 1000; // Adjust the chunk size as needed
-    const worker = new Worker(
-      new URL("./clearNotesWorker.js", import.meta.url),
-      { type: "module" }
-    );
-
-    worker.postMessage({ notes: isPlayingNotes, chunkSize });
-
-    worker.onmessage = (e) => {
-      if (e.data.type === "chunk") {
-        const chunk = e.data.chunk;
-        setIsPlayingNotes((prevNotes) =>
-          prevNotes.filter((note) => !chunk.includes(note))
-        );
-      } else if (e.data.type === "done") {
-        setTotalBeats(16); // Reset total beats to initial value or any default value
-        if (midiWorkerRef.current) {
-          midiWorkerRef.current.postMessage(new ArrayBuffer(0)); // Send an empty ArrayBuffer to reset the worker's state
-        }
-        worker.terminate();
-      }
-    };
-  };
 
   const playNotes = useCallback(() => {
     if (isPlaying) {
@@ -176,7 +154,7 @@ export default function PianoRoll() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+    <div key={key} className="w-full h-screen flex flex-col items-center justify-center bg-gray-100 p-4"> {/* Add key prop */}
       <div className="flex space-x-4 mb-4">
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -200,22 +178,18 @@ export default function PianoRoll() {
         <button className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600">
           <MdFileDownload className="text-2xl mr-1" onClick={exportMidi} />
         </button>
-        <button
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-          onClick={handleClearNotes}
-        >
-          🗑️
-        </button>
+        <ClearNotes setIsPlayingNotes={setIsPlayingNotes} setTotalBeats={setTotalBeats} setRenderPianoRoll={setRenderPianoRoll} isPlayingNotes={isPlayingNotes} />
       </div>
-      <PianoRollGrid
-        notes={isPlayingNotes}
-        setNotes={setIsPlayingNotes}
-        handleNoteChange={handleNoteChange}
-        handleNoteDelete={handleNoteDelete}
-        handleNoteCreate={handleNoteCreate}
-        totalBeats={totalBeats}
-      />
-      {/* <Connector notes={isPlayingNotes} isPlaying={isPlaying} /> */}
+      {renderPianoRoll && (
+        <PianoRollGrid
+          notes={isPlayingNotes}
+          setNotes={setIsPlayingNotes}
+          handleNoteChange={handleNoteChange}
+          handleNoteDelete={handleNoteDelete}
+          handleNoteCreate={handleNoteCreate}
+          totalBeats={totalBeats}
+        />
+      )}
     </div>
   );
 }
