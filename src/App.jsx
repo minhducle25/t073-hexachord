@@ -5,6 +5,8 @@ import { FaInfoCircle } from 'react-icons/fa';
 import CircleView from './components/CircleView';
 import TonnetzView from './components/TonnetzView';
 import LoopPlayer from './components/LoopPlayer';
+import Sidebar from './components/sidebar/SideBar';
+import { PlayingProvider } from './context/PlayingContext';
 
 const App = () => {
     const [notes, setNotes] = useState([]);
@@ -42,39 +44,41 @@ const App = () => {
     };
 
     return (
-        <div
-            id="app"
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-            }}
-        >
-            <FaInfoCircle
-                onClick={startTour}
+        <PlayingProvider>
+            <div
+                id="app"
                 style={{
-                    position: 'fixed',
-                    top: '20px',
-                    left: '20px',
-                    fontSize: '24px',
-                    color: '#333',
-                    cursor: 'pointer',
-                    zIndex: 1000,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                 }}
-                title="Start Tour"
-            />
+            >
+                <FaInfoCircle
+                    onClick={startTour}
+                    style={{
+                        position: 'fixed',
+                        top: '20px',
+                        left: '20px',
+                        fontSize: '24px',
+                        color: '#333',
+                        cursor: 'pointer',
+                        zIndex: 1000,
+                    }}
+                    title="Start Tour"
+                />
 
-            <div style={{ display: 'flex' }}>
-                <TonnetzView notes={notes} />
-                <CircleView />
-            </div>
-            
+                <div style={{ display: 'flex' }}>
+                    <TonnetzView notes={notes} className="tonnetzView" />
+                    <CircleView className="circleView" />
+                    <Sidebar />
+                </div>
 
-            <div className="loopPlayer" style={{ display: 'flex' }}>
-                <LoopPlayer />
+                <div className="loopPlayer" style={{ display: 'flex' }}>
+                    <LoopPlayer />
+                </div>
             </div>
-        </div>
+        </PlayingProvider>
     );
 };
 
