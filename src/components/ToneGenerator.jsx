@@ -59,6 +59,17 @@ const ToneGenerator = React.forwardRef((props, ref) => {
         console.error(`Error playing note: ${noteWithOctave}`, error);
       }
     },
+    playMidi: async (midiNumber) => {
+      await initializeSynth();
+
+      try {
+        const frequency = Tone.Frequency(midiNumber, "midi").toFrequency(); // Convert MIDI number to frequency
+        console.log(`Playing MIDI number: ${midiNumber}, Frequency: ${frequency}`);
+        synthRef.current.triggerAttackRelease(frequency, "8n");
+      } catch (error) {
+        console.error(`Error playing MIDI number: ${midiNumber}`, error);
+      }
+    },
     playChord: async (notes) => {
       await initializeSynth();
 
