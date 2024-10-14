@@ -17,6 +17,8 @@ const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
   const [debugClock, setDebugClock] = useState(0); // For debugging note timings
 
   useEffect(() => {
+    let timeouts = [];
+
     if (isPlaying && isPlayingNotes.length > 0) {
       setRenderedNotes([]); // Clear the rendered notes before starting
       setDebugClock(0); // Reset the debug clock
@@ -37,7 +39,7 @@ const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
         const notes = notesByTime[time];
 
         // Schedule rendering of notes at this time
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           const newRenderedNotes = notes.flatMap(note => {
             let noteName = midiToNote(note.pitch);
             noteName = replaceSharpWithSymbol(noteName);
@@ -63,17 +65,25 @@ const Connector = ({ isPlaying, isPlayingNotes, scale, tx, ty }) => {
 
           // Remove each note based on its individual end time
           newRenderedNotes.forEach(renderedNote => {
-            setTimeout(() => {
+            const removeTimeoutId = setTimeout(() => {
               setRenderedNotes(prevNotes => prevNotes.filter(note => note.id !== renderedNote.id));
             }, renderedNote.duration * 1500); // Keep the note rendered for its full duration
+            timeouts.push(removeTimeoutId);
           });
         }, time * 1000); // Convert time to milliseconds
+
+        timeouts.push(timeoutId);
       });
     } else {
       setRenderedNotes([]);
       setDebugClock(0);
     }
-  }, [isPlayingNotes, isPlaying]);
+
+    // Cleanup function to clear timeouts when isPlaying changes
+    return () => {
+      timeouts.forEach(timeoutId => clearTimeout(timeoutId));
+    };
+  }, [isPlaying, isPlayingNotes]);
 
   return (
     <>
