@@ -134,7 +134,7 @@ const LoopPlayer = () => {
   }, [isPlaying]);
 
   return (
-    <div className="fixed bottom-0 w-full left-0 bg-white p-4 shadow-lg">
+    <div className="fixed w-full left-0 bg-white p-4 shadow-lg">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Tonnetz Loop Player</h1>
         <input type="file" accept=".mid" onChange={handleFileChange} className="mb-4 p-2 border rounded" />
