@@ -286,7 +286,7 @@ const DragZoomSvg = ({
             border: "none",
           }}
         >
-          <BottomDrawer graph={graph} setGraph={setGraph} x={950} y={550} />
+          {/* <BottomDrawer graph={graph} setGraph={setGraph} x={950} y={550} /> */}
         </div>
       </foreignObject>
       <ToneGenerator ref={toneGeneratorRef} />{" "}
