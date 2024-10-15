@@ -54,7 +54,7 @@ const Sidebar = () => {
         </div>
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-4 right-4 p-4 bg-black text-white rounded-full shadow-lg transform transition duration-1000 ease-in-out hover:scale-110"
+          className="sideBar fixed bottom-4 right-4 p-4 bg-black text-white rounded-full shadow-lg transform transition duration-1000 ease-in-out hover:scale-110"
         >
           <span className="sr-only">Open Sidebar</span>
           <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
