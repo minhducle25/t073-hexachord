@@ -7,6 +7,7 @@ import TonnetzView from './components/TonnetzView';
 import LoopPlayer from './components/LoopPlayer';
 import Sidebar from './components/sidebar/SideBar';
 import { PlayingProvider } from './context/PlayingContext';
+import Header from './components/Header'; // Import the Header component
 
 const App = () => {
     const [notes, setNotes] = useState([]);
@@ -50,6 +51,7 @@ const App = () => {
 
     return (
         <PlayingProvider>
+            <Header />
             <div
                 id="app"
                 style={{
