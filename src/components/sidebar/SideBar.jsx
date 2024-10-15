@@ -29,7 +29,7 @@ const Sidebar = () => {
           id="sidebar-overlay"
           className={`fixed inset-0 z-50 overflow-hidden transition-opacity duration-1000 ease-in-out ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         >
-          <div className="absolute inset-0 bg-gray-500 bg-opacity-75 transition-opacity duration-1000 ease-in-out"></div>
+          <div className="absolute inset-0 bg-transparent bg-opacity-75 transition-opacity duration-1000 ease-in-out"></div>
           <div
             id="drawer-right-example"
             ref={sidebarRef}
@@ -37,6 +37,9 @@ const Sidebar = () => {
             tabIndex="-1"
             aria-labelledby="drawer-right-label"
           >
+            <div className="mt-2 px-4 flex-1 overflow-auto">
+              <PianoRoll />
+            </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -47,9 +50,6 @@ const Sidebar = () => {
               </svg>
               <span className="sr-only">Close menu</span>
             </button>
-            <div className="mt-4 px-4 flex-1 overflow-auto">
-              <PianoRoll />
-            </div>
           </div>
         </div>
         <button
