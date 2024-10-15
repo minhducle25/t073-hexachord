@@ -33,6 +33,11 @@ const App = () => {
                     intro: 'This area allows you to control looping, playback, and other sound settings.',
                     position: 'top'
                 },
+                {
+                    element: '.sideBar',
+                    intro: 'This area allows you to upload, edit, and export notes.',
+                    position: 'top'
+                },
             ],
             showProgress: true,
             showBullets: false,
@@ -71,11 +76,12 @@ const App = () => {
                 <div style={{ display: 'flex' }}>
                     <TonnetzView notes={notes} className="tonnetzView" />
                     <CircleView className="circleView" />
-                    <Sidebar />
+                    <Sidebar className="sideBar" />
+                    
                 </div>
 
                 <div className="loopPlayer" style={{ display: 'flex' }}>
-                    <LoopPlayer />
+                    <LoopPlayer/>
                 </div>
             </div>
         </PlayingProvider>
