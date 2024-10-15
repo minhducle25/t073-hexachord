@@ -51,8 +51,8 @@ const TonnetzView = ({
   const isConnected = graph.intervals.reduce(gcd, 12) === 1;
 
   return (
-    <div className="tonnetzView flex flex-col items-center justify-center">
-    <div className="flex justify-center items-center">
+    <div className="flex flex-col items-center justify-center p-0 m-0">
+      <div className="tonnetzView flex justify-center items-center">
       <DragZoomSvg
         height={600}
         width={1000}
