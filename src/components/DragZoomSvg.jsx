@@ -55,15 +55,6 @@ const DragZoomSvg = ({
     if (lock) captureOff();
   }, [lock]);
 
-  // useEffect(() => {
-  //   if (isPlaying) {
-  //     console.log("playing");
-  //     console.log("Notes:", isPlayingNotes);
-  //   } else {
-  //     console.log("stopped");
-  //   }
-  // }, [isPlaying, isPlayingNotes]);
-
   // Functions to handle zoom, drag, and pan
   const zoomInOut = (wheelEvent) => {
     if (lock) return; // Ignore if locked
@@ -286,7 +277,7 @@ const DragZoomSvg = ({
             border: "none",
           }}
         >
-          <BottomDrawer graph={graph} setGraph={setGraph} x={950} y={550} />
+          {/* <BottomDrawer graph={graph} setGraph={setGraph} x={950} y={550} /> */}
         </div>
       </foreignObject>
       <ToneGenerator ref={toneGeneratorRef} />{" "}

@@ -22,9 +22,9 @@ const App = () => {
           <CircleView />
           <Sidebar />
         </div>
-        <div>
+        {/* <div>
           <LoopPlayer />
-        </div>
+        </div> */}
       </div>
     </PlayingProvider>
   );

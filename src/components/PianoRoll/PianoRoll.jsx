@@ -154,7 +154,7 @@ export default function PianoRoll() {
   };
 
   return (
-    <div key={key} className="w-full h-screen flex flex-col items-center justify-center bg-gray-100 p-4"> {/* Add key prop */}
+    <div key={key} className="w-full h-screen flex flex-col items-center justify-center bg-transparent p-4"> {/* Add key prop */}
       <div className="flex space-x-4 mb-4">
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
