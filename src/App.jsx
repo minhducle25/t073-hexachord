@@ -82,9 +82,9 @@ const App = () => {
                     
                 </div>
 
-                 <div className="loopPlayer" style={{ display: 'flex' }}>
+{/*                  <div className="loopPlayer" style={{ display: 'flex' }}>
                     <LoopPlayer/>
-                </div>
+                </div> */}
             </div>
         </PlayingProvider>
     );
