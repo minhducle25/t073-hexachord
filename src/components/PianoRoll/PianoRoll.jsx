@@ -16,7 +16,6 @@ export default function PianoRoll() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedData, setRecordedData] = useState(null);
   const [bpm, setBpm] = useState(120);
-  const [renderPianoRoll, setRenderPianoRoll] = useState(true); // Add renderPianoRoll state
   const nextId = useRef(
     isPlayingNotes.length > 0 ? Math.max(...isPlayingNotes.map((note) => note.id)) + 1 : 1
   );
