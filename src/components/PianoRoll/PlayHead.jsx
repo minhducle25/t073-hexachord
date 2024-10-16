@@ -32,7 +32,7 @@ const Playhead = ({ isPlaying, isPaused, bpm, totalBeats }) => {
     <div
       ref={playheadRef}
       className="absolute top-0 left-0 bg-red-500 opacity-75"
-      style={{ width: '2px', height: '100%' }} // Set height to 100% to span the entire grid height
+      style={{ width: '2px', height: '255%' }} // Set height to 100% to span the entire grid height
     />
   );
 };
