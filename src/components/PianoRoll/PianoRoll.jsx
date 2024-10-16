@@ -1,19 +1,20 @@
 import React, { useState, useCallback, useRef, useEffect, useContext } from "react";
 import * as Tone from "tone";
-import { Midi } from "@tonejs/midi";
-import { MdFileUpload, MdFileDownload } from "react-icons/md";
-import { FaPlay, FaStop } from "react-icons/fa";
+import { MdFileUpload } from "react-icons/md";
 import { saveAs } from "file-saver";
 import PianoRollGrid from "./PianoRollGrid";
 import { PlayingContext } from "../../context/PlayingContext";
-import ClearNotes from "./ClearNotes"; // Import the updated component
+import ClearNotes from "./ClearNotes";
 
 const initialNotes = [];
 
 export default function PianoRoll() {
-  const { isPlaying, setIsPlaying, isPlayingNotes, setIsPlayingNotes } = useContext(PlayingContext); // Use the context
+  const { isPlaying, setIsPlaying, isPlayingNotes, setIsPlayingNotes } = useContext(PlayingContext);
   const [totalBeats, setTotalBeats] = useState(16);
   const [key, setKey] = useState(0);
+  const [renderPianoRoll, setRenderPianoRoll] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedData, setRecordedData] = useState(null);
   const [bpm, setBpm] = useState(120);
   const [renderPianoRoll, setRenderPianoRoll] = useState(true); // Add renderPianoRoll state
   const nextId = useRef(
@@ -22,6 +23,7 @@ export default function PianoRoll() {
   const synth = useRef(null);
   const midiWorkerRef = useRef(null);
   const partRef = useRef(null);
+  const recorderRef = useRef(null);
 
   useEffect(() => {
     synth.current = new Tone.PolySynth(Tone.Synth).toDestination();
@@ -31,19 +33,18 @@ export default function PianoRoll() {
   }, []);
 
   useEffect(() => {
-    midiWorkerRef.current = new Worker(
-      new URL("./midiWorker.js", import.meta.url)
-    );
+    midiWorkerRef.current = new Worker(new URL("./midiWorker.js", import.meta.url));
     midiWorkerRef.current.onmessage = (e) => {
       const importedNotes = e.data;
       const importedBpm = e.data[0]?.bpm || 120;
       setIsPlayingNotes(importedNotes);
+
       setBpm(importedBpm);
       // Calculate the total number of beats required
       const maxTime = importedNotes.length > 0
         ? Math.max(...importedNotes.map((note) => note.time + note.duration))
-        : 16; // Default value when there are no notes
-      setTotalBeats(Math.ceil(maxTime) || 16); // Ensure totalBeats is never set to -Infinity
+        : 16;
+      setTotalBeats(Math.ceil(maxTime) || 16);
     };
     return () => {
       midiWorkerRef.current.terminate();
@@ -82,7 +83,8 @@ export default function PianoRoll() {
 
   const playNotes = useCallback(() => {
     if (isPlaying) {
-      stopNotes();
+      Tone.Transport.pause();
+      setIsPlaying(false);
     } else {
       setIsPlaying(true);
 
@@ -110,11 +112,11 @@ export default function PianoRoll() {
       const maxTime = Math.max(
         ...isPlayingNotes.map((note) => note.time + note.duration)
       );
-      setTimeout(() => {
+      Tone.Transport.scheduleOnce(() => {
         setIsPlaying(false);
         Tone.Transport.stop();
         part.dispose();
-      }, (maxTime + 1) * 1000);
+      }, maxTime + 1);
     }
   }, [isPlaying, isPlayingNotes, setIsPlaying]);
 
@@ -135,34 +137,56 @@ export default function PianoRoll() {
     }
   };
 
-  const exportMidi = () => {
-    const midi = new Midi();
-    const track = midi.addTrack();
+  const handleStartRecording = () => {
+    if (!isRecording) {
+      const recorder = new Tone.Recorder();
+      recorderRef.current = recorder;
+      synth.current.connect(recorder);
+      recorder.start();
+      setIsRecording(true);
+      setRecordedData(null);
+    }
+  };
 
-    isPlayingNotes.forEach((note) => {
-      if (note.duration > 0) {
-        track.addNote({
-          midi: note.pitch,
-          time: note.time,
-          duration: note.duration,
-          velocity: note.velocity,
-        });
-      }
-    });
+  const handleStopRecording = async () => {
+    if (isRecording) {
+      const recording = await recorderRef.current.stop();
+      recorderRef.current = null;
+      setIsRecording(false);
+      setRecordedData(recording);
+    }
+  };
 
-    const midiData = midi.toArray();
-    const blob = new Blob([midiData], { type: "audio/midi" });
-    saveAs(blob, "exported_midi.mid");
+  const handleDownloadRecording = () => {
+    if (recordedData) {
+      const mp3Blob = new Blob([recordedData], { type: 'audio/mp3' });
+      saveAs(mp3Blob, 'recorded-midi.mp3');
+    }
   };
 
   return (
-    <div key={key} className="w-full h-screen flex flex-col items-center justify-center bg-transparent p-4"> {/* Add key prop */}
+    <div key={key} className="w-full h-screen flex flex-col items-center justify-center bg-transparent p-4">
       <div className="flex space-x-4 mb-4">
+        {!isPlaying ? (
+          <button
+            onClick={playNotes}
+            className="bg-blue-500 text-white px-4 py-2 rounded shadow-md"
+          >
+            Play
+          </button>
+        ) : (
+          <button
+            onClick={playNotes}
+            className="bg-blue-500 text-white px-4 py-2 rounded shadow-md"
+          >
+            Pause
+          </button>
+        )}
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          onClick={playNotes}
+          onClick={stopNotes}
+          className="bg-red-500 text-white px-4 py-2 rounded shadow-md"
         >
-          {isPlaying ? <FaStop /> : <FaPlay />}
+          Stop
         </button>
         <button
           className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600"
@@ -177,9 +201,30 @@ export default function PianoRoll() {
           onChange={importMidi}
           className="hidden"
         />
-        <button className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-          <MdFileDownload className="text-2xl mr-1" onClick={exportMidi} />
+      </div>
+      <div className="mt-2 mb-4 flex space-x-4 items-center">
+        <button
+          onClick={handleStartRecording}
+          className="bg-purple-500 text-white px-4 py-2 rounded shadow-md"
+        >
+          Record
         </button>
+        {isRecording && (
+          <button
+            onClick={handleStopRecording}
+            className="bg-orange-500 text-white px-4 py-2 rounded shadow-md"
+          >
+            Stop Recording
+          </button>
+        )}
+        {recordedData && (
+          <button
+            onClick={handleDownloadRecording}
+            className="bg-blue-500 text-white px-4 py-2 rounded shadow-md"
+          >
+            Download MP3
+          </button>
+        )}
         <ClearNotes setIsPlayingNotes={setIsPlayingNotes} setTotalBeats={setTotalBeats} setRenderPianoRoll={setRenderPianoRoll} isPlayingNotes={isPlayingNotes} />
       </div>
       {renderPianoRoll && (
