@@ -1,6 +1,7 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState, useEffect } from "react";
 import { Rnd } from "react-rnd";
 import { FixedSizeList as List } from 'react-window';
+import Playhead from './PlayHead'; // Updated import
 
 const NOTES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 const OCTAVES = [2, 3, 4, 5, 6, 7];
@@ -9,7 +10,7 @@ const CELL_HEIGHT = 20;
 const TOTAL_PITCHES = OCTAVES.length * NOTES.length;
 const LOWEST_PITCH = OCTAVES[0] * 12;
 
-const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, handleNoteCreate, totalBeats }) => {
+const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, handleNoteCreate, totalBeats, isPlaying, bpm }) => {
   const gridRef = useRef(null);
 
   // Log totalBeats when the component receives it as a prop
@@ -91,20 +92,23 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
     console.log("Rendering time grid with totalBeats:", totalBeats);
 
     return (
-      <List
-        height={30}
-        itemCount={totalBeats} // Use totalBeats prop
-        itemSize={CELL_WIDTH}
-        layout="horizontal"
-        width={totalBeats * CELL_WIDTH} // Use totalBeats prop
-      >
-        {TimeGridItem}
-      </List>
+      <div className="relative">
+        <List
+          height={30}
+          itemCount={totalBeats} // Use totalBeats prop
+          itemSize={CELL_WIDTH}
+          layout="horizontal"
+          width={totalBeats * CELL_WIDTH} // Use totalBeats prop
+        >
+          {TimeGridItem}
+        </List>
+      </div>
     );
   }, [totalBeats]);
 
   return (
     <div className="relative w-full max-w-4xl h-[600px] overflow-auto border border-gray-300 bg-white">
+      <Playhead isPlaying={isPlaying} bpm={bpm} totalBeats={totalBeats} />
       <div className="absolute inset-0">
         <div className="grid grid-rows-[auto_1fr] h-full">
           <div className="grid grid-cols-[auto_1fr]">
