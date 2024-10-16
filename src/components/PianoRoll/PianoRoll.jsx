@@ -15,6 +15,8 @@ export default function PianoRoll() {
   const [renderPianoRoll, setRenderPianoRoll] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedData, setRecordedData] = useState(null);
+  const [bpm, setBpm] = useState(120);
+  const [renderPianoRoll, setRenderPianoRoll] = useState(true); // Add renderPianoRoll state
   const nextId = useRef(
     isPlayingNotes.length > 0 ? Math.max(...isPlayingNotes.map((note) => note.id)) + 1 : 1
   );
@@ -34,8 +36,11 @@ export default function PianoRoll() {
     midiWorkerRef.current = new Worker(new URL("./midiWorker.js", import.meta.url));
     midiWorkerRef.current.onmessage = (e) => {
       const importedNotes = e.data;
+      const importedBpm = e.data[0]?.bpm || 120;
       setIsPlayingNotes(importedNotes);
-  
+
+      setBpm(importedBpm);
+      // Calculate the total number of beats required
       const maxTime = importedNotes.length > 0
         ? Math.max(...importedNotes.map((note) => note.time + note.duration))
         : 16;
@@ -230,6 +235,8 @@ export default function PianoRoll() {
           handleNoteDelete={handleNoteDelete}
           handleNoteCreate={handleNoteCreate}
           totalBeats={totalBeats}
+          isPlaying={isPlaying}
+          bpm={bpm}
         />
       )}
     </div>
