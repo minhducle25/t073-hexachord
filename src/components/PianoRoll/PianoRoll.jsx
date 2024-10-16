@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect, useContext } from "react";
 import * as Tone from "tone";
-import { MdFileUpload } from "react-icons/md";
+import { MdFileUpload, MdFileDownload } from "react-icons/md";
+import { FaPlay, FaStop } from "react-icons/fa";
 import { saveAs } from "file-saver";
 import PianoRollGrid from "./PianoRollGrid";
 import { PlayingContext } from "../../context/PlayingContext";
@@ -136,6 +137,26 @@ export default function PianoRoll() {
     }
   };
 
+  const exportMidi = () => {
+    const midi = new Midi();
+    const track = midi.addTrack();
+
+    isPlayingNotes.forEach((note) => {
+      if (note.duration > 0) {
+        track.addNote({
+          midi: note.pitch,
+          time: note.time,
+          duration: note.duration,
+          velocity: note.velocity,
+        });
+      }
+    });
+
+    const midiData = midi.toArray();
+    const blob = new Blob([midiData], { type: "audio/midi" });
+    saveAs(blob, "exported_midi.mid");
+  };
+
   const handleStartRecording = () => {
     if (!isRecording) {
       const recorder = new Tone.Recorder();
@@ -200,6 +221,9 @@ export default function PianoRoll() {
           onChange={importMidi}
           className="hidden"
         />
+        <button className="px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600" onClick={exportMidi}>
+          <MdFileDownload className="text-2xl mr-1" />
+        </button>
       </div>
       <div className="mt-2 mb-4 flex space-x-4 items-center">
         <button
