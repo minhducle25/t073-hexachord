@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 
-const Playhead = ({ isPlaying, bpm, totalBeats }) => {
+const Playhead = ({ isPlaying, isPaused, bpm, totalBeats }) => {
   const playheadRef = useRef(null);
   const [playheadPosition, setPlayheadPosition] = useState(0);
   const startTimeRef = useRef(null);
@@ -18,12 +18,15 @@ const Playhead = ({ isPlaying, bpm, totalBeats }) => {
           setPlayheadPosition(0); // Reset playhead position when animation completes
         }
       });
+    } else if (isPaused) {
+      gsap.killTweensOf(playheadRef.current);
+      setPlayheadPosition(playheadRef.current.getBoundingClientRect().x); // Set playhead position to current position when paused
     } else {
       gsap.killTweensOf(playheadRef.current);
       setPlayheadPosition(1); // Set playhead position to 1 when not playing to make it visible
       gsap.set(playheadRef.current, { x: 1 });
     }
-  }, [isPlaying, bpm, totalBeats]);
+  }, [isPlaying, isPaused, bpm, totalBeats]);
 
   return (
     <div

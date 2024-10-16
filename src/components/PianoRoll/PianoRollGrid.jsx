@@ -10,7 +10,7 @@ const CELL_HEIGHT = 20;
 const TOTAL_PITCHES = OCTAVES.length * NOTES.length;
 const LOWEST_PITCH = OCTAVES[0] * 12;
 
-const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, handleNoteCreate, totalBeats, isPlaying, bpm }) => {
+const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, handleNoteCreate, totalBeats, isPlaying, isPaused, bpm }) => {
   const gridRef = useRef(null);
 
   // Log totalBeats when the component receives it as a prop
@@ -108,7 +108,7 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
 
   return (
     <div className="relative w-full max-w-4xl h-[600px] overflow-auto border border-gray-300 bg-white">
-      <Playhead isPlaying={isPlaying} bpm={bpm} totalBeats={totalBeats} />
+      <Playhead isPlaying={isPlaying} isPaused={isPaused} bpm={bpm} totalBeats={totalBeats} />
       <div className="absolute inset-0">
         <div className="grid grid-rows-[auto_1fr] h-full">
           <div className="grid grid-cols-[auto_1fr]">

@@ -2,7 +2,6 @@ import React, { useState, useCallback, useRef, useEffect, useContext } from "rea
 import * as Tone from "tone";
 import { Midi } from "@tonejs/midi";
 import { MdFileUpload, MdFileDownload } from "react-icons/md";
-import { FaPlay, FaStop } from "react-icons/fa";
 import { saveAs } from "file-saver";
 import PianoRollGrid from "./PianoRollGrid";
 import { PlayingContext } from "../../context/PlayingContext";
@@ -18,6 +17,7 @@ export default function PianoRoll() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedData, setRecordedData] = useState(null);
   const [bpm, setBpm] = useState(120);
+  const [isPaused, setIsPaused] = useState(false); // New state for pause
   const nextId = useRef(
     isPlayingNotes.length > 0 ? Math.max(...isPlayingNotes.map((note) => note.id)) + 1 : 1
   );
@@ -86,8 +86,10 @@ export default function PianoRoll() {
     if (isPlaying) {
       Tone.Transport.pause();
       setIsPlaying(false);
+      setIsPaused(true); // Set isPaused to true when pausing
     } else {
       setIsPlaying(true);
+      setIsPaused(false); // Set isPaused to false when playing
 
       const part = new Tone.Part(
         (time, note) => {
@@ -123,6 +125,7 @@ export default function PianoRoll() {
 
   const stopNotes = useCallback(() => {
     setIsPlaying(false);
+    setIsPaused(false); // Reset isPaused when stopping
     Tone.Transport.stop();
     if (partRef.current) {
       partRef.current.dispose();
@@ -260,6 +263,7 @@ export default function PianoRoll() {
           handleNoteCreate={handleNoteCreate}
           totalBeats={totalBeats}
           isPlaying={isPlaying}
+          isPaused={isPaused} // Pass isPaused to PianoRollGrid
           bpm={bpm}
         />
       )}
