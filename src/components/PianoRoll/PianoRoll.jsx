@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect, useContext } from "react";
 import * as Tone from "tone";
+import { Midi } from "@tonejs/midi";
 import { MdFileUpload, MdFileDownload } from "react-icons/md";
 import { FaPlay, FaStop } from "react-icons/fa";
 import { saveAs } from "file-saver";
