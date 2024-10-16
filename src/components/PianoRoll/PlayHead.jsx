@@ -23,8 +23,8 @@ const Playhead = ({ isPlaying, isPaused, bpm, totalBeats }) => {
       setPlayheadPosition(playheadRef.current.getBoundingClientRect().x); // Set playhead position to current position when paused
     } else {
       gsap.killTweensOf(playheadRef.current);
-      setPlayheadPosition(1); // Set playhead position to 1 when not playing to make it visible
-      gsap.set(playheadRef.current, { x: 1 });
+      setPlayheadPosition(0); // Set playhead position to 1 when not playing to make it visible
+      gsap.set(playheadRef.current, { x: 47 });
     }
   }, [isPlaying, isPaused, bpm, totalBeats]);
 
