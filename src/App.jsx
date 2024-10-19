@@ -2,12 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import IntroJs from 'intro.js';
 import 'intro.js/introjs.css';
 import { FaInfoCircle } from 'react-icons/fa';
-import CircleView from './components/CircleView';
-import TonnetzView from './components/TonnetzView';
-import LoopPlayer from './components/LoopPlayer';
+import CircleView from './components/Circles/CircleView';
+import TonnetzView from './components/TonnetzGrid/TonnetzView';
 import Sidebar from './components/sidebar/SideBar';
 import { PlayingProvider } from './context/PlayingContext';
-import Header from './components/Header'; // Import the Header component
+import Header from './components/Header/Header';
 
 const App = () => {
     const [notes, setNotes] = useState([]);
