@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react';
-import ToneGenerator from '../ToneGenerator'; // Import ToneGenerator
+import ToneGenerator from '../ToneGenerator/ToneGenerator'; // Import ToneGenerator
 
 const Dichords = ({ points, onSideClick }) => {
   const toneGeneratorRef = useRef(null); // Create a ref for ToneGenerator

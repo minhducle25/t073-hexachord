@@ -24,7 +24,7 @@ const Playhead = ({ isPlaying, isPaused, bpm, totalBeats }) => {
     } else {
       gsap.killTweensOf(playheadRef.current);
       setPlayheadPosition(1); // Set playhead position to 1 when not playing to make it visible
-      gsap.set(playheadRef.current, { x: 1 });
+      gsap.set(playheadRef.current, { x: 47 });
     }
   }, [isPlaying, isPaused, bpm, totalBeats]);
 
@@ -32,7 +32,7 @@ const Playhead = ({ isPlaying, isPaused, bpm, totalBeats }) => {
     <div
       ref={playheadRef}
       className="absolute top-0 left-0 bg-red-500 opacity-75"
-      style={{ width: '2px', height: '100%' }} // Set height to 100% to span the entire grid height
+      style={{ width: '2px', height: '255%' }} // Set height to 100% to span the entire grid height
     />
   );
 };

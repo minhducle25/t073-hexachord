@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { categorizedPositions } from '../NoteMap';
+import { categorizedPositions } from '../NoteMap/NoteMap';
 import Notes from '../Chords/Notes';
 
 // Utility function to convert MIDI number to note name without octave

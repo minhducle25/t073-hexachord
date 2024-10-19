@@ -1,8 +1,8 @@
 // Trichords.jsx
 
 import React, { useRef, useState } from "react";
-import { categorizedPositions } from "../NoteMap"; // Import categorizedPositions
-import ToneGenerator from "../ToneGenerator"; // Import ToneGenerator
+import { categorizedPositions } from "../NoteMap/NoteMap"; // Import categorizedPositions
+import ToneGenerator from "../ToneGenerator/ToneGenerator"; // Import ToneGenerator
 import Notes from "./Notes"; // Import Notes component
 import Dichords from "./Dichords"; // Import Dichords component
 

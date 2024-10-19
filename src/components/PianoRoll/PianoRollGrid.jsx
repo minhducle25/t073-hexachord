@@ -14,7 +14,7 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
   const gridRef = useRef(null);
 
   // Log totalBeats when the component receives it as a prop
-  console.log("PianoRollGrid received totalBeats:", totalBeats);
+  // console.log("PianoRollGrid received totalBeats:", totalBeats);
 
   const renderNote = useCallback(
     ({ id, pitch, time, duration }) => {
@@ -33,7 +33,7 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
           }}
           bounds="parent"
           onDragStop={(e, d) => {
-            console.log(d);
+            // console.log(d);
             
             const newTime = d.x / CELL_WIDTH;
             const newPitch = pitch;
@@ -89,7 +89,7 @@ const PianoRollGrid = ({ notes, setNotes, handleNoteChange, handleNoteDelete, ha
 
   const renderTimeGrid = useCallback(() => {
     // Log totalBeats when it is used in renderTimeGrid
-    console.log("Rendering time grid with totalBeats:", totalBeats);
+    // console.log("Rendering time grid with totalBeats:", totalBeats);
 
     return (
       <div className="relative">
