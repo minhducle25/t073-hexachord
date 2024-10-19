@@ -10,9 +10,9 @@
 <h3 align="center">Tonnetz Player</h3>
 
   <p align="center">
-    TONNETZ PLAYER A browser-based “Tonnetz player” will enable users to directly analyse and play with the music harmony. The tool will allow users to input, modify, and output databases of Tonnetz diagrams of musical harmony, link these diagrams to sound samples, and play a set of triads. By incorporating these features, this project will help improve the lessons on music harmony teaching and research.
+    TONNETZ PLAYER A browser-based “Tonnetz player” will enable users to directly analyse and play with the music harmony. This app allows users to input and modify notes, then play them using the Tonnetz Grid. The project aims to enhance music harmony lessons and support research in the field.
     <br />
-    <a href="https://github.com/minhducle25/t073-hexachord"><strong>Explore the docs »</strong></a>
+    <a href="./Technical%20Documentation.pdf"><strong>Explore the docs »</strong></a>
     <br />
     <br />
     <a href="https://t073.netlify.app/">View Demo</a>
