@@ -120,10 +120,10 @@ _For more examples, please refer to the [Documentation](https://github.com/minhd
 ### Top contributors:
 
 <a href="https://github.com/minhducle25" title="minhducle25">
-  <img src="https://avatars.githubusercontent.com/u/122418348?s=64&v=4">
+  <img src="https://avatars.githubusercontent.com/u/122418348?s=64&v=4" width="50" height="50">
 </a>
-<a href="https://github.com/minhducle25" title="minhducle25">
-  <img src="https://avatars.githubusercontent.com/u/122418348?s=64&v=4">
+<a href="https://github.com/tdinh33" title="tdinh33">
+  <img src="https://avatars.githubusercontent.com/u/115476638?s=64&v=4" width="50" height="50">
 </a>
 
 <!-- CONTACT -->
