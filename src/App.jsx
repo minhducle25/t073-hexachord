@@ -20,12 +20,19 @@ const App = () => {
             steps: [
                 {
                     element: '.tonnetzView',
-                    intro: 'This is the Tonnetz grid, where you can explore musical relationships.',
+                    intro: `
+                    <strong>Interactive Tonnetz Grid</strong><br>
+                    <em>What it does:</em> A visual grid that allows users to play and experiment with musical notes, showcasing harmonies and chord progressions in real-time.<br>
+                    <em>How to use:</em> Click on the individual notes on the grid to hear them play. The grid will highlight the notes you select, showing how they harmonize with others.
+                `,                    
                     position: 'right'
                 },
                 {
                     element: '.circleView',
-                    intro: 'These circles display the notes and chords within the Tonnetz grid in a circular layout.',
+                    intro: `
+                    <strong>What it does:</strong> A visual tool that helps users understand and explore relationships between different musical keys and chords. It shows how keys are connected through perfect fifths, helping users build harmonies and progressions.<br>
+                    <strong>How to use:</strong> Use the circle to select different keys or chords. Clicking on a key will highlight related chords, allowing you to experiment with chord progressions and key changes in your composition.
+                    `,                    
                     position: 'left'
                 },
                 {
