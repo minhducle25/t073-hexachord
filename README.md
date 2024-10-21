@@ -86,44 +86,6 @@ Check that the Node version is above 20
 
 
 ## How to Run the Application Locally  
-Our application requires Node.js to run. Here's how you can get it running:
-
-1. **Clone the project repository:**
-   ```sh
-   git clone <your-repository-url>
-   cd <your-project-folder>
-
-
-## Install dependencies:
-```sh
-npm install
-npm start
-```
-
-Open the browser at http://localhost:3000 to see the running app.
-
-## Running Without Node.js
-Since Node.js is a required dependency for our application, running it without Node isn’t possible. However, we deploy and run the application online using Netlify.
-
-## Deploying and Running on Netlify
-Netlify makes it simple to deploy our app. Here’s how to get it running:
-
-1. [Create an account on Netlify](https://www.netlify.com/).**
-
-
-2.Connect your GitHub repository to Netlify by following the platform’s onboarding process.
-
-
-3.After deploying, your app will be available at a generated Netlify URL.
-
-
-4.This approach allows you to showcase and share the app without the need for local installation or dependencies.
-
-
-
-
-### Installation
-
 1. Clone the repo
    ```sh
    git clone https://github.com/minhducle25/t073-hexachord.git
@@ -136,6 +98,28 @@ Netlify makes it simple to deploy our app. Here’s how to get it running:
    ```sh
    npm run dev
    ```
+Open the browser at http://localhost:3000 to see the running app.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+```
+
+
+## Running Without Node.js
+Since Node.js is a required dependency for our application, running it without Node isn’t possible. However, we deploy and run the application online using Netlify.
+
+## Deploying and Running on Netlify
+Netlify makes it simple to deploy our app. Here’s how to get it running:
+
+1. [Create an account on Netlify](https://www.netlify.com/)
+
+
+2. Connect your GitHub repository to Netlify by following the platform’s onboarding process.
+
+
+3. After deploying, your app will be available at a generated Netlify URL.
+
+
+4. This approach allows you to showcase and share the app without needing local installation or dependencies.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
