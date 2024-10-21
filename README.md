@@ -173,8 +173,6 @@ _For more examples, please refer to the [Documentation](https://github.com/minhd
 ## Acknowledgments
 
 * We would like to acknowledge the original project that inspired us: [imaginary web-hexachord](https://github.com/IMAGINARY/web-hexachord).
-* []()
-* []()
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
