@@ -97,10 +97,9 @@ Check that the Node version is above 20
    ```sh
    npm run dev
    ```
-Open the browser at http://localhost:3000 to see the running app.
+4. Open the browser at http://localhost:3000 to see the running app.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-```
 
 
 ## Running Without Node.js
