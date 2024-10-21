@@ -165,13 +165,6 @@ _For more examples, please refer to the [Documentation](https://github.com/minhd
   <img src="https://avatars.githubusercontent.com/u/46241075?s=64&v=4" width="50" height="50">
 </a>
 
-<!-- CONTACT -->
-## Contact
-
-Your Name - lducminh25@gmail.com
-
-Project Link: [https://github.com/minhducle25/t073-hexachord](https://github.com/minhducle25/t073-hexachord)
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
@@ -179,7 +172,7 @@ Project Link: [https://github.com/minhducle25/t073-hexachord](https://github.com
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* [IMAGINARY's web-hexachord](https://github.com/IMAGINARY/web-hexachord](We would like to acknowledge the original project that inspired us)
+* We would like to acknowledge the original project that inspired us: [imaginary web-hexachord](https://github.com/IMAGINARY/web-hexachord).
 * []()
 * []()
 
