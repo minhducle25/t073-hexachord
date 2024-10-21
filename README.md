@@ -42,7 +42,6 @@
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
@@ -74,7 +73,7 @@ Web version of the Hexachord software, with new features planned as well.
 
 <!-- GETTING STARTED -->
 ## Getting Started
-### Setting up the Environment
+### Prerequisites
 1. **Installing Node.js**  
    To run our application locally, you need to install Node.js. Follow the official Node.js installation guide for your platform [here](https://nodejs.org/en). After installation, you can verify that Node.js is installed correctly by running the following commands in your terminal:
 
@@ -85,7 +84,7 @@ These commands will display the installed version of Node and npm (Node Package 
 Check that the Node version is above 20
 
 
-## How to Run the Application Locally  
+## Installation
 1. Clone the repo
    ```sh
    git clone https://github.com/minhducle25/t073-hexachord.git
@@ -137,7 +136,7 @@ _For more examples, please refer to the [Documentation](./document/Technical%20D
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-### Top contributors:
+### Contributing:
 
 <a href="https://github.com/minhducle25" title="minhducle25">
   <img src="https://avatars.githubusercontent.com/u/122418348?s=64&v=4" width="50" height="50">
