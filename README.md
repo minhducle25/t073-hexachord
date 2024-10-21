@@ -23,10 +23,6 @@
   </p>
 </div>
 
-### Acknowledgment
-We would like to acknowledge the original project that inspired us:
-[IMAGINARY's web-hexachord](https://github.com/IMAGINARY/web-hexachord).
-
 <!-- TABLE OF CONTENTS -->
 <details>
   <summary>Table of Contents</summary>
@@ -183,7 +179,7 @@ Project Link: [https://github.com/minhducle25/t073-hexachord](https://github.com
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
+* [IMAGINARY's web-hexachord](https://github.com/IMAGINARY/web-hexachord](We would like to acknowledge the original project that inspired us)
 * []()
 * []()
 
